@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="https://aihub.ssturing.com/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -15,6 +15,7 @@
         extend: {
           colors: {
             lime: '#c8ff4f',
+            data: '#5eead4',
             ink: '#0c0c0b',
             paper: '#f0ede6',
             muted: '#6b6b65',
@@ -24,7 +25,7 @@
             'border-light': '#3a3a38',
           },
           fontFamily: {
-            display: ['Syne', 'Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'Inter', 'sans-serif'],
             body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', 'monospace'],
           },
@@ -55,6 +56,26 @@
       background: rgba(200, 255, 79, 0.12);
       color: #f0ede6;
     }
+    .hero-title-lime {
+      animation: titlePulse 4s ease-in-out infinite;
+    }
+    .hero-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(40px) rotateX(-80deg);
+      transform-origin: center bottom;
+      animation: charReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes charReveal {
+      from {
+        opacity: 0;
+        transform: translateY(40px) rotateX(-80deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+      }
+    }
     .reveal {
       opacity: 0;
       transform: translateY(24px);
@@ -79,6 +100,37 @@
     .why-card:hover .why-value {
       text-shadow: 0 0 24px rgba(200,255,79,0.35);
     }
+    .product-tab {
+      position: relative;
+      overflow: hidden;
+    }
+    .product-tab::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, transparent, var(--tab-color, #c8ff4f), transparent);
+      transform: translateY(-100%);
+      transition: transform 0.5s ease;
+    }
+    .product-tab.active::before {
+      transform: translateY(0);
+    }
+    .product-detail-flip {
+      animation: detailFlip 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes detailFlip {
+      from {
+        opacity: 0;
+        transform: perspective(1000px) rotateX(-12deg) translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: perspective(1000px) rotateX(0deg) translateY(0);
+      }
+    }
     .reveal-scale {
       opacity: 0;
       transform: scale(0.96) translateY(16px);
@@ -87,6 +139,101 @@
     .reveal-scale.in {
       opacity: 1;
       transform: scale(1) translateY(0);
+    }
+    .section-line {
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #c8ff4f, transparent);
+      transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .section-line.in {
+      width: 60px;
+    }
+    .count-up {
+      font-variant-numeric: tabular-nums;
+    }
+    .magnetic {
+      transition: transform 0.2s ease-out;
+      will-change: transform;
+    }
+    .magnetic-inner {
+      display: inline-block;
+      transition: transform 0.2s ease-out;
+      pointer-events: none;
+    }
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      width: 0;
+      height: 1.5px;
+      background: #c8ff4f;
+      transition: width 0.25s ease, left 0.25s ease;
+      border-radius: 1px;
+    }
+    .nav-link:hover::after {
+      width: calc(100% - 24px);
+      left: 12px;
+    }
+    .link-underline {
+      position: relative;
+      display: inline-block;
+    }
+    .link-underline::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 0;
+      height: 1.5px;
+      background: currentColor;
+      transition: width 0.3s ease, left 0.3s ease;
+      border-radius: 1px;
+    }
+    .link-underline:hover::after {
+      width: 100%;
+      left: 0;
+    }
+    .card-glow {
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .card-glow:hover {
+      transform: translateY(-4px);
+      border-color: rgba(200, 255, 79, 0.4);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(200, 255, 79, 0.08);
+    }
+    .input-glow {
+      position: relative;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-glow::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 14px;
+      padding: 2px;
+      background: linear-gradient(90deg, transparent, rgba(200,255,79,0.6), transparent);
+      background-size: 200% 100%;
+      background-position: 100% 0;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .input-glow:hover::after,
+    .input-glow:focus-within::after {
+      opacity: 1;
+      animation: inputGlow 1.5s linear infinite;
+    }
+    @keyframes inputGlow {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -99,15 +246,139 @@
         transform: none !important;
       }
     }
-    .reveal,
-    .reveal-left,
-    .reveal-scale {
-    opacity:1!important;
-    transform:none!important;
+    .reveal.in,
+    .reveal-left.in,
+    .reveal-scale.in {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .section-line.in {
+      width: 60px !important;
     }
   </style>
 </head>
 <body class="bg-ink text-paper font-body text-[15px] leading-relaxed antialiased overflow-x-hidden">
+
+  <style>
+    .scroll-indicator {
+      animation: bounceDown 2s ease-in-out infinite;
+    }
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); opacity: 0.6; }
+      50% { transform: translateY(8px); opacity: 1; }
+    }
+    .hero-title-massive {
+      font-size: clamp(64px, 14vw, 170px);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+    .hero-subtitle {
+      font-size: clamp(16px, 2.2vw, 24px);
+      letter-spacing: 0.12em;
+    }
+
+    /* Scroll-driven hero transition */
+    .hero-sticky {
+      position: relative;
+      width: 100%;
+      height: 200vh;
+    }
+    .hero-sticky-inner {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-bg-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      transition: none;
+      will-change: transform, border-radius;
+    }
+    .hero-bg-media img,
+    .hero-bg-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-bg-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(180deg, rgba(12,12,11,0.35) 0%, rgba(12,12,11,0.55) 60%, rgba(12,12,11,0.95) 100%);
+      transition: none;
+      will-change: opacity;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      width: 100%;
+      transition: none;
+      will-change: opacity, transform;
+    }
+    .intro-content {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: none;
+      will-change: opacity, transform;
+    }
+    .intro-content.in {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .intro-title-line {
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .gradient-text-shine {
+      background: linear-gradient(90deg, #a78bfa 0%, #60a5fa 22%, #f472b6 44%, #fbbf24 66%, #34d399 88%, #c8ff4f 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .intro-stat-card {
+      background: rgba(17, 17, 16, 0.72);
+      border: 1px solid rgba(40, 40, 38, 0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 1.75rem 1.25rem;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .intro-stat-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(200, 255, 79, 0.45);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 28px rgba(200, 255, 79, 0.1);
+    }
+    @media (max-width: 768px) {
+      .intro-stat-card {
+        padding: 1.25rem 0.75rem;
+      }
+    }
+  </style>
+
+  <!-- Particle background -->
+  <canvas id="particleCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-60" aria-hidden="true"></canvas>
+
+  <!-- Hero top glow -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[500px] pointer-events-none z-[1] opacity-40" style="background: radial-gradient(ellipse at 50% 0%, rgba(200,255,79,0.12) 0%, rgba(99,102,241,0.05) 40%, transparent 70%);" aria-hidden="true"></div>
+
+  <!-- Hero lime accent glow behind title -->
+  <div id="heroGlow" class="fixed top-[20%] left-[10%] w-[600px] h-[600px] pointer-events-none z-[1] opacity-0 transition-opacity duration-1000" style="background: radial-gradient(circle, rgba(200,255,79,0.08) 0%, transparent 60%); filter: blur(60px);" aria-hidden="true"></div>
 
   <!-- Cursor follower -->
   <div id="cursor" class="fixed top-0 left-0 w-6 h-6 rounded-full pointer-events-none z-[9999] bg-lime mix-blend-difference transition-transform duration-75 ease-out hidden md:block" aria-hidden="true"></div>
@@ -117,98 +388,81 @@
     <div id="progressBar" class="h-full bg-lime w-0"></div>
   </div>
 
-  <!-- Nav -->
-  <nav id="navbar" class="fixed top-3 left-4 right-4 z-50 rounded-2xl border border-transparent transition-all duration-500">
-    <div class="px-5 h-14 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2 font-display font-extrabold text-base tracking-tight text-paper hover:text-lime transition-colors">
-        <img src="images/神速图标.png" alt="神速信息" class="w-7 h-7 rounded-full object-cover" />
-        <span>神速信息</span>
-      </a>
-      <div class="hidden md:flex items-center gap-1">
-        <a href="#products" class="nav-link relative px-3 py-1.5 text-[15px] font-body rounded-lg transition-colors text-[#c0c0ba] hover:text-lime" data-target="products">产品</a>
-        <a href="#why" class="nav-link relative px-3 py-1.5 text-[15px] font-body rounded-lg transition-colors text-[#c0c0ba] hover:text-lime" data-target="why">优势</a>
-        <a href="#clients" class="nav-link relative px-3 py-1.5 text-[15px] font-body rounded-lg transition-colors text-[#c0c0ba] hover:text-lime" data-target="clients">客户端</a>
-        <a href="#cta" class="nav-link relative px-3 py-1.5 text-[15px] font-body rounded-lg transition-colors text-[#c0c0ba] hover:text-lime" data-target="cta">定价</a>
-      </div>
-      <a href="https://aihub.ssturing.com/keys" class="text-sm font-body font-semibold px-5 py-2 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 bg-lime text-ink">立即使用</a>
-    </div>
-  </nav>
+  <!-- Nav removed -->
 
-  <!-- Hero -->
-  <section class="relative min-h-[110vh] flex flex-col justify-center px-6 pt-28 pb-20 overflow-hidden">
-    <div id="spotlight" class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 40%, rgba(200,255,79,0.06) 0%, transparent 55%)"></div>
-    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(circle, #282826 1px, transparent 1px); background-size: 32px 32px; opacity: 0.6;"></div>
+  <!-- Hero + Intro scroll-driven transition -->
+  <div class="hero-sticky" id="heroSticky">
+    <div class="hero-sticky-inner" id="heroStickyInner">
 
-    <div class="relative max-w-7xl mx-auto w-full">
-      <div class="flex items-center gap-3 mb-10">
-        <span class="flex items-center gap-2 border border-border rounded-full px-4 py-2 text-[12px] font-mono text-[#b0b0aa] tracking-[0.12em] uppercase">
-          <span class="w-2 h-2 rounded-full bg-lime animate-pulse-dot"></span>
-          稳定高速的 AI 编程中转站
-        </span>
+      <!-- Animated background media -->
+      <div class="hero-bg-media" id="heroBgMedia">
+        <img src="images/首页极夜.gif" alt="" class="w-full h-full object-cover" />
+        <div class="hero-bg-overlay" id="heroBgOverlay"></div>
       </div>
 
-      <div class="flex flex-col lg:flex-row lg:items-end gap-12 lg:gap-20">
-        <div class="flex-1">
-          <h1 class="font-display font-extrabold leading-[0.9] tracking-tight text-paper mb-8 select-none" style="font-size: clamp(72px, 14vw, 180px)">
-            <span class="block">神速</span>
-            <span class="block text-lime">信息</span>
+      <div id="spotlight" class="absolute inset-0 pointer-events-none z-[3]" style="background: radial-gradient(ellipse at 50% 40%, rgba(200,255,79,0.05) 0%, transparent 55%)"></div>
+
+      <!-- Hero content -->
+      <section class="hero-content absolute inset-0 flex flex-col items-center justify-center px-6" id="heroContent">
+        <div class="max-w-5xl mx-auto w-full">
+          <h1 id="heroTitle" class="hero-title-massive font-display font-extrabold tracking-tight text-paper mb-8 select-none" style="perspective: 1000px;">
+            <span class="inline-block hero-title-line" style="text-shadow: 0 0 80px rgba(200,255,79,0.12), 0 0 160px rgba(200,255,79,0.06);">神速</span><span class="inline-block text-lime hero-title-line hero-title-lime" style="text-shadow: 0 0 60px rgba(200,255,79,0.4), 0 0 120px rgba(200,255,79,0.25), 0 0 200px rgba(200,255,79,0.12);">信息</span>
           </h1>
-          <p class="font-body text-base font-medium text-paper mb-2 max-w-xs">稳定高速的 AI 编程中转站</p>
-          <p class="font-body text-sm text-muted mb-8 max-w-xs leading-relaxed">一个 API 密钥，调用全部主流国产 AI 大模型</p>
-          <div class="flex items-center gap-3 flex-wrap">
-            <a href="https://aihub.ssturing.com/keys" class="font-body font-bold text-sm px-6 py-3 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 bg-lime text-ink shadow-[0_8px_28px_rgba(200,255,79,0.18)] hover:shadow-[0_12px_36px_rgba(200,255,79,0.28)]">
-              立即开始
+          <p class="hero-subtitle font-body font-medium text-paper/90 mb-24 tracking-[0.15em]">稳定高速的 AI 编程中转站</p>
+
+          <div class="scroll-indicator flex flex-col items-center gap-3 text-paper/80">
+            <span class="text-[12px] font-mono uppercase tracking-[0.2em]">向下滚动</span>
+            <svg width="24" height="40" viewBox="0 0 20 32" fill="none" class="opacity-70">
+              <rect x="1" y="1" width="18" height="30" rx="9" stroke="currentColor" stroke-width="2"/>
+              <circle cx="10" cy="10" r="3" fill="currentColor" class="animate-bounce"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- Intro content -->
+      <section class="intro-content" id="introContent">
+        <div class="max-w-6xl mx-auto w-full text-center">
+          <h2 class="font-display font-extrabold text-paper intro-title-line mb-12" style="font-size: clamp(36px, 6.5vw, 80px);">
+            <div class="reveal" id="introLine1">一个 API 密钥</div>
+            <div class="reveal gradient-text-shine" id="introLine2" style="animation-delay: 0.08s;">调用全部主流国产 AI 大模型</div>
+          </h2>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-14 max-w-4xl mx-auto">
+            <div class="intro-stat-card reveal-scale" style="animation-delay: 0.16s;">
+              <div class="font-display text-[2.6rem] md:text-[3.5rem] font-extrabold text-lime leading-none tracking-tight why-counter count-up" data-target="40" data-suffix="+">0+</div>
+              <div class="font-body text-sm text-muted mt-2">模型覆盖</div>
+            </div>
+            <div class="intro-stat-card reveal-scale" style="animation-delay: 0.24s;">
+              <div class="font-display text-[2.6rem] md:text-[3.5rem] font-extrabold text-lime leading-none tracking-tight why-counter count-up" data-target="99.9" data-suffix="%">0%</div>
+              <div class="font-body text-sm text-muted mt-2">服务可用性</div>
+            </div>
+            <div class="intro-stat-card reveal-scale" style="animation-delay: 0.32s;">
+              <div class="font-display text-[2.6rem] md:text-[3.5rem] font-extrabold text-lime leading-none tracking-tight">&lt;50<span class="text-[1.4rem] md:text-[1.8rem]">ms</span></div>
+              <div class="font-body text-sm text-muted mt-2">超低延迟</div>
+            </div>
+            <div class="intro-stat-card reveal-scale" style="animation-delay: 0.40s;">
+              <div class="font-display text-[2.6rem] md:text-[3.5rem] font-extrabold text-lime leading-none tracking-tight why-counter count-up" data-target="10" data-suffix="x">0x</div>
+              <div class="font-body text-sm text-muted mt-2">推理加速</div>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="animation-delay: 0.48s;">
+            <a href="https://aihub.ssturing.com/sign-up" class="magnetic group inline-flex items-center justify-center gap-2 font-body font-bold text-[15px] px-8 py-4 rounded-full bg-lime text-ink shadow-[0_0_30px_rgba(200,255,79,0.15)] hover:shadow-[0_0_45px_rgba(200,255,79,0.3)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+              <span class="magnetic-inner">立即开始</span>
+              <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </a>
-            <a href="https://aihub.ssturing.com/models" class="font-body text-sm px-6 py-3 rounded-full border border-border text-muted hover:border-[#555] hover:text-paper transition-all duration-200">
-              查看模型 →
+            <a href="#products" class="magnetic inline-flex items-center justify-center font-body font-semibold text-[15px] px-8 py-4 rounded-full border border-border text-paper hover:border-lime/50 hover:text-lime transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+              <span class="magnetic-inner">查看模型</span>
             </a>
           </div>
         </div>
+      </section>
 
-        <div class="lg:w-[420px] flex flex-col gap-6">
-          <!-- Terminal -->
-          <div class="rounded-2xl overflow-hidden bg-surface border border-border">
-            <div class="flex items-center gap-2 px-4 py-3 border-b border-border">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-[#febc2e]"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-[#28c840]"></span>
-              <span class="ml-auto font-mono text-[10px] text-border-light">shensu-api ~ demo</span>
-            </div>
-            <div class="p-5 font-mono text-[11px] leading-relaxed space-y-1">
-              <p><span class="text-border-light">$ </span><span class="text-lime">curl</span><span class="text-paper"> -X POST /v1/chat/completions \</span></p>
-              <p class="text-muted pl-3">-H <span class="text-[#febc2e]">"Authorization: Bearer sk-***"</span> \</p>
-              <p class="text-muted pl-3">-d <span class="text-paper">{</span><span class="text-[#febc2e]">"model"</span><span class="text-paper">: </span><span class="text-lime">"deepseek-chat"</span><span class="text-paper">}</span></p>
-              <div class="mt-3 border-t border-border pt-3">
-                <p class="text-paper">{</p>
-                <p class="pl-3"><span class="text-[#febc2e]">"content"</span><span class="text-muted">: </span><span class="text-lime">"Hello!"</span></p>
-                <p class="text-paper">}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hero stats -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="rounded-2xl px-6 py-6 border border-border bg-surface group cursor-default">
-              <div class="font-display font-extrabold text-[24px] md:text-[30px] text-lime leading-none mb-3 tracking-tight">40+</div>
-              <div class="font-body text-[14px] text-[#a0a09a] tracking-wide">接入模型</div>
-            </div>
-            <div class="rounded-2xl px-6 py-6 border border-border bg-surface group cursor-default">
-              <div class="font-display font-extrabold text-[24px] md:text-[30px] text-lime leading-none mb-3 tracking-tight">99.9%</div>
-              <div class="font-body text-[14px] text-[#a0a09a] tracking-wide">服务可用性</div>
-            </div>
-            <div class="rounded-2xl px-6 py-6 border border-border bg-surface group cursor-default">
-              <div class="font-display font-extrabold text-[24px] md:text-[30px] text-lime leading-none mb-3 tracking-tight">&lt;50ms</div>
-              <div class="font-body text-[14px] text-[#a0a09a] tracking-wide">平均延迟</div>
-            </div>
-            <div class="rounded-2xl px-6 py-6 border border-border bg-surface group cursor-default">
-              <div class="font-display font-extrabold text-[24px] md:text-[30px] text-lime leading-none mb-3 tracking-tight">10x</div>
-              <div class="font-body text-[14px] text-[#a0a09a] tracking-wide">成本优化</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </section>
+  </div>
 
   <!-- Ticker -->
   <div class="border-y border-border py-3 overflow-hidden select-none">
@@ -227,21 +481,25 @@
   </style>
 
   <!-- Products -->
-  <section id="products" class="py-28 px-6">
-    <div class="max-w-7xl mx-auto">
+  <section id="products" class="py-28 px-6 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 80% 30%, rgba(129,140,248,0.06) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(244,114,182,0.04) 0%, transparent 50%);"></div>
+    <div class="absolute inset-0 pointer-events-none opacity-[0.15]" style="background-image: linear-gradient(rgba(129,140,248,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(129,140,248,0.15) 1px, transparent 1px); background-size: 60px 60px;"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 reveal">
-        <div>
+        <div class="reveal-left">
           <p class="eyebrow font-mono text-[15px] text-[#a0a09a] tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-lime"></span>
             产品矩阵
           </p>
+          <div class="section-line mb-4"></div>
           <h2 class="font-display font-extrabold leading-none text-paper" style="font-size: clamp(40px, 7vw, 80px)">
             全场景
             <br />
             <span class="text-lime">产品矩阵</span>
           </h2>
         </div>
-        <p class="font-body text-sm text-muted leading-relaxed max-w-56 md:text-right">助力开发者一站式实现 AI 能力与应用的快速对接</p>
+        <p class="font-body text-sm text-muted leading-relaxed max-w-56 md:text-right reveal">助力开发者一站式实现 AI 能力与应用的快速对接</p>
       </div>
 
       <div class="flex flex-col lg:flex-row gap-6">
@@ -249,7 +507,7 @@
           <!-- JS populated -->
         </div>
 
-        <div id="productDetail" class="flex-1 rounded-2xl p-8 md:p-10 border border-border bg-surface relative overflow-hidden min-h-[360px]">
+        <div id="productDetail" class="flex-1 rounded-2xl p-8 md:p-10 border border-border bg-surface/85 backdrop-blur-sm relative overflow-hidden min-h-[360px]">
           <div id="productGlow" class="absolute -top-16 -right-16 w-80 h-80 rounded-full pointer-events-none opacity-15 blur-[60px]"></div>
           <div id="productNum" class="font-display font-extrabold relative z-0" style="font-size: clamp(64px, 10vw, 120px); color: #232320; line-height: 1"></div>
           <div class="relative z-10 -mt-6">
@@ -266,18 +524,19 @@
   <section id="why" class="py-28 px-6 border-t border-border">
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 reveal">
-        <div>
+        <div class="reveal-left">
           <p class="eyebrow font-mono text-[15px] text-[#a0a09a] tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-lime"></span>
             核心优势
           </p>
+          <div class="section-line mb-4"></div>
           <h2 class="font-display font-extrabold leading-none text-paper" style="font-size: clamp(40px, 7vw, 80px)">
             为什么选择
             <br />
             <span class="text-lime">神速信息</span>
           </h2>
         </div>
-        <p class="font-body text-sm text-muted leading-relaxed max-w-56 md:text-right">经过开发者验证的 AI 中转服务</p>
+        <p class="font-body text-sm text-muted leading-relaxed max-w-56 md:text-right reveal">经过开发者验证的 AI 中转服务</p>
       </div>
 
       <div id="whyDeckWrap" class="relative min-h-[520px] md:min-h-[480px] reveal">
@@ -296,12 +555,13 @@
           <span class="w-1.5 h-1.5 rounded-full bg-lime"></span>
           无缝对接
         </p>
-        <h2 class="font-display font-extrabold text-paper leading-none mb-4" style="font-size: clamp(36px, 6vw, 72px)">
+        <div class="section-line mx-auto mb-4"></div>
+        <h2 class="font-display font-extrabold text-paper leading-none mb-4 reveal-left" style="font-size: clamp(36px, 6vw, 72px)">
           无缝对接
           <br />
           <span class="text-lime">主流客户端</span>
         </h2>
-        <p class="font-body text-sm text-muted max-w-sm mx-auto leading-relaxed">修改 API 地址和密钥，即可在以下客户端中使用</p>
+        <p class="font-body text-sm text-muted max-w-sm mx-auto leading-relaxed reveal">修改 API 地址和密钥，即可在以下客户端中使用</p>
       </div>
       <div id="clientsOrbit" class="relative w-full max-w-4xl mx-auto h-[420px] md:h-[520px] rounded-3xl border border-border bg-surface overflow-hidden flex items-center justify-center" style="perspective: 1000px;">
         <div id="orbitRing" class="relative w-[280px] h-[280px] md:w-[360px] md:h-[360px]" style="transform-style: preserve-3d;">
@@ -315,23 +575,26 @@
   </section>
 
   <!-- CTA -->
-  <section id="cta" class="py-28 px-6 border-t border-border">
-    <div class="max-w-7xl mx-auto">
-      <div class="rounded-3xl p-8 md:p-16 relative overflow-hidden bg-surface border border-border reveal-scale">
-        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none" style="background: radial-gradient(circle, rgba(200,255,79,0.12) 0%, transparent 60%)"></div>
-        <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full pointer-events-none" style="background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 60%)"></div>
+  <section id="cta" class="py-28 px-6 border-t border-border relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 50% 50%, rgba(200,255,79,0.07) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(99,102,241,0.05) 0%, transparent 40%);"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="rounded-3xl p-8 md:p-16 relative overflow-hidden bg-surface/80 backdrop-blur-sm border border-border reveal-scale">
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none" style="background: radial-gradient(circle, rgba(200,255,79,0.15) 0%, transparent 60%)"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full pointer-events-none" style="background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 60%)"></div>
         <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-          <div class="lg:max-w-md">
+          <div class="lg:max-w-md reveal-left">
             <p class="eyebrow font-mono text-[15px] text-[#a0a09a] tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-lime animate-pulse-dot"></span>
               开始使用
             </p>
+            <div class="section-line mb-4"></div>
             <h2 class="font-display font-extrabold text-paper leading-none mb-5" style="font-size: clamp(40px, 7vw, 80px)">
               准备好
               <br />
               <span class="text-lime">开始了吗？</span>
             </h2>
-            <p class="font-body text-sm text-muted leading-relaxed">注册即可获取 API 密钥，几分钟内完成接入，开始调用全部 AI 模型。</p>
+            <p class="font-body text-sm text-muted leading-relaxed reveal">注册即可获取 API 密钥，几分钟内完成接入，开始调用全部 AI 模型。</p>
           </div>
 
           <div class="w-full lg:w-[420px] shrink-0">
@@ -347,10 +610,10 @@
                   <span class="text-lime">$</span> <span id="ctaTypeText">注册后，系统将为您分配专属 API 密钥</span><span class="inline-block w-2 h-4 bg-lime ml-0.5 align-middle animate-blink"></span>
                 </p>
                 <div class="relative mb-4">
-                  <div id="ctaKeyDisplay" class="font-mono text-xs md:text-sm text-paper bg-surface border border-border rounded-xl px-4 py-3.5 truncate tracking-wide">sk-********************************</div>
-                  <button id="ctaCopyBtn" class="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[10px] px-2 py-1 rounded-md bg-border text-paper opacity-0 transition-opacity duration-200 hover:bg-lime hover:text-ink" disabled>复制</button>
+                  <div id="ctaKeyDisplay" class="font-mono text-xs md:text-sm text-paper bg-surface border border-border rounded-xl px-4 py-3.5 truncate tracking-wide input-glow">sk-********************************</div>
+                  <button id="ctaCopyBtn" class="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[10px] px-2 py-1 rounded-md bg-border text-paper opacity-0 transition-opacity duration-200 hover:bg-lime hover:text-ink magnetic" disabled>复制</button>
                 </div>
-                <button id="ctaGenerateBtn" class="w-full font-body font-bold text-sm px-6 py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-lime text-ink shadow-[0_0_30px_rgba(200,255,79,0.15)] hover:shadow-[0_0_40px_rgba(200,255,79,0.3)]">
+                <button id="ctaGenerateBtn" class="magnetic w-full font-body font-bold text-sm px-6 py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-lime text-ink shadow-[0_0_30px_rgba(200,255,79,0.15)] hover:shadow-[0_0_40px_rgba(200,255,79,0.3)]">
                   生成我的 API 密钥
                 </button>
                 <div id="ctaSuccess" class="mt-3 mb-4 font-mono text-[11px] text-lime opacity-0 transition-opacity duration-300">✓ 演示密钥已生成，注册后获取真实密钥</div>
@@ -552,8 +815,8 @@
         tabsWrap.innerHTML = products.map(function(p, i) {
           var isActive = i === activeProduct;
           return '<button class="product-tab text-left rounded-2xl p-5 border transition-all duration-200 hover:scale-[1.01] ' +
-            (isActive ? 'bg-surface-hover border-' + p.color : 'bg-surface border-border') +
-            '" data-index="' + i + '" style="' + (isActive ? 'border-color:' + p.color + '; box-shadow: 0 0 0 1px ' + p.color + '30, 0 8px 32px rgba(0,0,0,0.4);' : '') + '">' +
+            (isActive ? 'active bg-surface-hover' : 'bg-surface border-border') +
+            '" data-index="' + i + '" style="--tab-color:' + p.color + ';' + (isActive ? 'border-color:' + p.color + '; box-shadow: 0 0 0 1px ' + p.color + '30, 0 8px 32px rgba(0,0,0,0.4);' : '') + '">' +
             '<div class="flex items-center justify-between mb-2">' +
               '<span class="font-mono tracking-widest transition-all duration-200 ' + (isActive ? 'text-[#b0b0aa] text-[14px] scale-125 origin-left' : 'text-[#4a4a48] text-[11px]') + '">' + p.id + '</span>' +
               '<span class="w-2 h-2 rounded-full transition-all duration-200" style="background:' + (isActive ? p.color : '#282826') + '"></span>' +
@@ -563,10 +826,23 @@
         }).join('');
 
         tabsWrap.querySelectorAll('.product-tab').forEach(function(btn) {
+          var hoverTimeout = null;
           btn.addEventListener('click', function() {
             activeProduct = parseInt(btn.getAttribute('data-index'), 10);
             renderTabs();
             renderDetail(true);
+          });
+          btn.addEventListener('mouseenter', function() {
+            var idx = parseInt(btn.getAttribute('data-index'), 10);
+            if (idx === activeProduct) return;
+            hoverTimeout = setTimeout(function() {
+              activeProduct = idx;
+              renderTabs();
+              renderDetail(true);
+            }, 400);
+          });
+          btn.addEventListener('mouseleave', function() {
+            if (hoverTimeout) { clearTimeout(hoverTimeout); hoverTimeout = null; }
           });
         });
       }
@@ -603,15 +879,11 @@
         }
 
         if (animate && detailWrap) {
-          detailWrap.style.animation = 'none';
+          detailWrap.classList.remove('product-detail-flip');
           detailWrap.offsetHeight;
-          detailWrap.style.animation = 'fadeSlide 0.35s ease';
+          detailWrap.classList.add('product-detail-flip');
         }
       }
-
-      var slideStyle = document.createElement('style');
-      slideStyle.textContent = '@keyframes fadeSlide { from { opacity: 0; transform: translateX(14px) } to { opacity: 1; transform: translateX(0) } }';
-      document.head.appendChild(slideStyle);
 
       renderTabs();
       renderDetail(false);
@@ -676,7 +948,7 @@
           var initial = item.text ? item.text : item.num + suffix;
           var val = item.text
             ? '<span class="why-value font-display text-[2.4rem] md:text-[3.2rem] font-extrabold text-lime leading-none tracking-tight break-words">' + item.text + '</span>'
-            : '<span class="why-value font-display text-[3rem] md:text-[4rem] font-extrabold text-lime leading-none tracking-tight why-counter" data-target="' + item.num + '" data-suffix="' + suffix + '" data-fallback="' + fallback + '" data-animated="0">' + initial + '</span>';
+            : '<span class="why-value font-display text-[3rem] md:text-[4rem] font-extrabold text-lime leading-none tracking-tight why-counter count-up" data-target="' + item.num + '" data-suffix="' + suffix + '" data-fallback="' + fallback + '" data-animated="0">' + initial + '</span>';
           return '<div class="why-card absolute w-[88vw] max-w-[340px] md:max-w-[380px] rounded-2xl border border-border bg-surface cursor-pointer overflow-hidden transition-all duration-500 ease-out" data-index="' + i + '" style="transform-origin:center center;transform-style:preserve-3d">' +
             '<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-[#0e0e0d]">' +
               '<span class="w-2 h-2 rounded-full bg-[#ff5f57]"></span>' +
@@ -938,15 +1210,371 @@
       // ===== Reveal animations =====
       var revealObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
-          if (entry.isIntersecting) entry.target.classList.add('in');
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            entry.target.querySelectorAll('.count-up[data-animated="0"]').forEach(function(el) {
+              el.setAttribute('data-animated', '1');
+              countUp(el);
+            });
+          }
         });
       }, { threshold: 0.1 });
-      document.querySelectorAll('.reveal, .reveal-scale').forEach(function(el) { revealObserver.observe(el); });
+      document.querySelectorAll('.reveal, .reveal-scale, .reveal-left').forEach(function(el) { revealObserver.observe(el); });
+
+      // Observe section lines
+      var lineObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) entry.target.classList.add('in');
+        });
+      }, { threshold: 0.5 });
+      document.querySelectorAll('.section-line').forEach(function(el) { lineObserver.observe(el); });
+
+      // ===== Magnetic buttons =====
+      (function() {
+        var magneticBtns = document.querySelectorAll('.magnetic');
+        if (window.matchMedia('(pointer: coarse)').matches) return;
+        magneticBtns.forEach(function(btn) {
+          btn.addEventListener('mousemove', function(e) {
+            var rect = btn.getBoundingClientRect();
+            var x = e.clientX - rect.left - rect.width / 2;
+            var y = e.clientY - rect.top - rect.height / 2;
+            btn.style.transform = 'translate(' + (x * 0.25) + 'px, ' + (y * 0.25) + 'px)';
+          });
+          btn.addEventListener('mouseleave', function() {
+            btn.style.transform = '';
+          });
+        });
+      })();
 
       // Why row hover group fix
       document.querySelectorAll('.why-row').forEach(function(row) {
         row.classList.add('group');
       });
+
+      // ===== Hero title character animation =====
+      (function() {
+        var heroTitle = document.getElementById('heroTitle');
+        if (!heroTitle) return;
+
+        var lines = heroTitle.querySelectorAll('.hero-title-line');
+        lines.forEach(function(line, lineIndex) {
+          var text = line.textContent;
+          line.innerHTML = '';
+          var chars = text.split('');
+          chars.forEach(function(char, charIndex) {
+            var span = document.createElement('span');
+            span.className = 'hero-char';
+            span.textContent = char;
+            span.style.animationDelay = (lineIndex * 0.35 + charIndex * 0.1) + 's';
+            line.appendChild(span);
+          });
+        });
+      })();
+
+      // ===== Scroll-driven hero → intro transition =====
+      (function() {
+        var sticky = document.getElementById('heroSticky');
+        var inner = document.getElementById('heroStickyInner');
+        var bg = document.getElementById('heroBgMedia');
+        var overlay = document.getElementById('heroBgOverlay');
+        var heroContent = document.getElementById('heroContent');
+        var introContent = document.getElementById('introContent');
+        var introLine1 = document.getElementById('introLine1');
+        var introLine2 = document.getElementById('introLine2');
+        var statCards = introContent ? introContent.querySelectorAll('.intro-stat-card') : [];
+        var introButtons = introContent ? introContent.querySelectorAll('.intro-content a') : [];
+
+        if (!sticky || !inner || !bg || !overlay || !heroContent || !introContent) return;
+
+        function updateTransition() {
+          var rect = sticky.getBoundingClientRect();
+          var stickyHeight = sticky.offsetHeight;
+          var windowHeight = window.innerHeight;
+          // progress from 0 (top of sticky) to 1 (sticky scrolled one viewport)
+          var rawProgress = Math.max(0, Math.min(1, -rect.top / (stickyHeight - windowHeight)));
+
+          // Phase 1: 0-0.55 -> shrink background + fade hero
+          // Phase 2: 0.45-1 -> show intro content
+          var phase1 = Math.min(1, rawProgress / 0.55);
+          var phase2 = Math.max(0, (rawProgress - 0.45) / 0.55);
+
+          // Background scales down from full cover to ~92% width with rounded corners
+          var scale = 1 - phase1 * 0.06;
+          var insetH = phase1 * 2; // vh inset top/bottom
+          var insetW = phase1 * 2.5; // vw inset left/right
+          bg.style.transform = 'scale(' + scale + ')';
+          bg.style.borderRadius = (phase1 * 28) + 'px';
+          bg.style.top = insetH + 'vh';
+          bg.style.bottom = insetH + 'vh';
+          bg.style.left = insetW + 'vw';
+          bg.style.right = insetW + 'vw';
+
+          // Overlay darkens as background shrinks to improve text contrast
+          overlay.style.opacity = 0.55 + phase1 * 0.4;
+
+          // Hero content fades out and moves up
+          heroContent.style.opacity = 1 - Math.min(1, rawProgress / 0.4);
+          heroContent.style.transform = 'translateY(' + (-rawProgress * 80) + 'px)';
+
+          // Intro content fades in and moves up
+          introContent.style.opacity = phase2;
+          introContent.style.transform = 'translateY(' + ((1 - phase2) * 60) + 'px)';
+          if (phase2 > 0.1) {
+            introContent.classList.add('in');
+          } else {
+            introContent.classList.remove('in');
+          }
+
+          // Subtle parallax for intro title lines
+          if (introLine1) {
+            introLine1.style.transform = 'translateY(' + ((1 - phase2) * 30) + 'px)';
+            introLine1.style.opacity = phase2;
+          }
+          if (introLine2) {
+            introLine2.style.transform = 'translateY(' + ((1 - phase2) * 40) + 'px)';
+            introLine2.style.opacity = phase2;
+          }
+
+          // Stagger stat cards and trigger count-up once
+          statCards.forEach(function(card, i) {
+            var cardPhase = Math.max(0, Math.min(1, (phase2 - 0.15 - i * 0.06) / 0.4));
+            card.style.opacity = cardPhase;
+            card.style.transform = 'translateY(' + ((1 - cardPhase) * 35) + 'px)';
+
+            var counter = card.querySelector('.why-counter.count-up');
+            if (counter && cardPhase > 0.5 && counter.getAttribute('data-animated') !== '2') {
+              counter.setAttribute('data-animated', '2');
+              counter.textContent = '0' + (counter.getAttribute('data-suffix') || '');
+              countUp(counter);
+            }
+          });
+
+          // Buttons
+          introButtons.forEach(function(btn, i) {
+            var btnPhase = Math.max(0, Math.min(1, (phase2 - 0.35 - i * 0.05) / 0.4));
+            btn.style.opacity = btnPhase;
+            btn.style.transform = 'translateY(' + ((1 - btnPhase) * 25) + 'px)';
+          });
+        }
+
+        window.addEventListener('scroll', updateTransition, { passive: true });
+        window.addEventListener('resize', updateTransition, { passive: true });
+        updateTransition();
+      })();
+
+      // ===== Mountain background =====
+      (function() {
+        var canvas = document.getElementById('mountainCanvas');
+        if (!canvas || window.matchMedia('(pointer: coarse)').matches) return;
+        var ctx = canvas.getContext('2d');
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var width, height;
+        var time = 0;
+        var animationId = null;
+
+        function resize() {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          canvas.style.width = width + 'px';
+          canvas.style.height = height + 'px';
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.scale(dpr, dpr);
+        }
+
+        function noise(x) {
+          return Math.sin(x) * 0.5 + Math.sin(x * 2.3) * 0.25 + Math.sin(x * 4.7) * 0.125;
+        }
+
+        function drawMountain(layer, color, amplitude, speed, yOffset) {
+          ctx.beginPath();
+          ctx.moveTo(0, height);
+          for (var x = 0; x <= width; x += 4) {
+            var nx = x * 0.002 + time * speed + layer * 10;
+            var y = height - yOffset - Math.abs(noise(nx)) * amplitude;
+            ctx.lineTo(x, y);
+          }
+          ctx.lineTo(width, height);
+          ctx.closePath();
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          time += 0.0008;
+
+          // Distant mountains
+          drawMountain(0, 'rgba(60, 40, 35, 0.4)', height * 0.25, 0.3, height * 0.15);
+          // Mid mountains
+          drawMountain(1, 'rgba(40, 28, 25, 0.6)', height * 0.22, 0.5, height * 0.08);
+          // Near mountains
+          drawMountain(2, 'rgba(22, 16, 14, 0.85)', height * 0.18, 0.7, 0);
+
+          animationId = requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+        window.addEventListener('resize', resize, { passive: true });
+      })();
+
+      // ===== Particle background =====
+      (function() {
+        var canvas = document.getElementById('particleCanvas');
+        if (!canvas || window.matchMedia('(pointer: coarse)').matches) {
+          if (canvas) canvas.style.display = 'none';
+          return;
+        }
+        var ctx = canvas.getContext('2d');
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var width, height;
+        var particles = [];
+        var maxParticles = 180;
+        var connectionDistance = 150;
+        var mouse = { x: -9999, y: -9999, active: false };
+        var animationId = null;
+        var isVisible = true;
+        var frameCount = 0;
+
+        function resize() {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          canvas.style.width = width + 'px';
+          canvas.style.height = height + 'px';
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.scale(dpr, dpr);
+        }
+
+        function createParticles() {
+          particles = [];
+          for (var i = 0; i < maxParticles; i++) {
+            particles.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              vx: (Math.random() - 0.5) * 0.5,
+              vy: (Math.random() - 0.5) * 0.5,
+              radius: Math.random() * 2 + 0.6,
+              alpha: Math.random() * 0.5 + 0.25,
+              pulse: Math.random() * Math.PI * 2,
+              color: Math.random() > 0.85 ? '129, 140, 248' : '200, 255, 79'
+            });
+          }
+        }
+
+        function draw() {
+          if (!isVisible) return;
+          frameCount++;
+          ctx.clearRect(0, 0, width, height);
+
+          var time = Date.now() * 0.001;
+          var i, j, p, dist, lineAlpha;
+
+          for (i = 0; i < particles.length; i++) {
+            p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Mouse repulsion
+            if (mouse.active) {
+              var dx = p.x - mouse.x;
+              var dy = p.y - mouse.y;
+              var mDist = Math.sqrt(dx * dx + dy * dy);
+              if (mDist < 220 && mDist > 0) {
+                var force = (220 - mDist) / 220;
+                p.x += (dx / mDist) * force * 3;
+                p.y += (dy / mDist) * force * 3;
+              }
+            }
+
+            // Wrap around
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+            if (p.y < -10) p.y = height + 10;
+            if (p.y > height + 10) p.y = -10;
+
+            // Pulse alpha
+            var pulseAlpha = p.alpha + Math.sin(time * 1.2 + p.pulse) * 0.1;
+            pulseAlpha = Math.max(0.1, Math.min(0.8, pulseAlpha));
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + p.color + ', ' + pulseAlpha + ')';
+            ctx.fill();
+
+            // Glow for larger particles
+            if (p.radius > 1.8) {
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(' + p.color + ', ' + pulseAlpha * 0.08 + ')';
+              ctx.fill();
+            }
+          }
+
+          // Draw connections
+          var skip = dpr > 1 && frameCount % 2 === 0;
+          if (!skip) {
+            for (i = 0; i < particles.length; i++) {
+              p = particles[i];
+              for (j = i + 1; j < particles.length; j++) {
+                var other = particles[j];
+                var dx = p.x - other.x;
+                var dy = p.y - other.y;
+                dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < connectionDistance) {
+                  lineAlpha = (1 - dist / connectionDistance) * 0.22;
+                  ctx.beginPath();
+                  ctx.moveTo(p.x, p.y);
+                  ctx.lineTo(other.x, other.y);
+                  ctx.strokeStyle = 'rgba(200, 255, 79, ' + lineAlpha + ')';
+                  ctx.lineWidth = 0.8;
+                  ctx.stroke();
+                }
+              }
+            }
+          }
+
+          animationId = requestAnimationFrame(draw);
+        }
+
+        function onMouseMove(e) {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+          mouse.active = true;
+        }
+
+        function onMouseLeave() {
+          mouse.active = false;
+        }
+
+        function onVisibilityChange() {
+          isVisible = !document.hidden;
+          if (isVisible && !animationId) {
+            draw();
+          }
+        }
+
+        // Fade in hero glow
+        setTimeout(function() {
+          var heroGlow = document.getElementById('heroGlow');
+          if (heroGlow) heroGlow.classList.remove('opacity-0');
+        }, 300);
+
+        resize();
+        createParticles();
+        draw();
+
+        window.addEventListener('resize', function() {
+          resize();
+          createParticles();
+        }, { passive: true });
+        window.addEventListener('mousemove', onMouseMove, { passive: true });
+        document.body.addEventListener('mouseleave', onMouseLeave, { passive: true });
+        document.addEventListener('visibilitychange', onVisibilityChange);
+      })();
 
     })();
   </script>
