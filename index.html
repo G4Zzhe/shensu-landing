@@ -57,45 +57,63 @@
       var html = document.documentElement;
       var STORAGE_KEY = 'shensu-theme';
 
-      function isDarkState() {
-        return html.classList.contains('dark') || html.getAttribute('data-theme') === 'dark' || html.getAttribute('data-color-mode') === 'dark';
+      function hasDarkClass() {
+        return html.classList.contains('dark');
+      }
+
+      function hasLightClass() {
+        return html.classList.contains('light');
       }
 
       function setDarkClass(shouldDark) {
-        if (shouldDark) html.classList.add('dark');
-        else html.classList.remove('dark');
+        if (shouldDark) {
+          html.classList.add('dark');
+          html.classList.remove('light');
+        } else {
+          html.classList.remove('dark');
+          html.classList.add('light');
+        }
+      }
+
+      function syncFromHtml() {
+        if (hasDarkClass()) {
+          setDarkClass(true);
+          localStorage.setItem(STORAGE_KEY, 'dark');
+          return 'dark';
+        } else if (hasLightClass()) {
+          setDarkClass(false);
+          localStorage.setItem(STORAGE_KEY, 'light');
+          return 'light';
+        }
+        return null;
       }
 
       function applyTheme(theme) {
         if (theme === 'system') {
-          setDarkClass(window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          setDarkClass(prefersDark);
         } else {
           setDarkClass(theme === 'dark');
         }
         localStorage.setItem(STORAGE_KEY, theme);
       }
 
-      // Observe system/theme-framework changes on <html>
-      var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(m) {
-          if (m.type === 'attributes' && (m.attributeName === 'class' || m.attributeName === 'data-theme' || m.attributeName === 'data-color-mode')) {
-            // Sync localStorage to reflect external system state
-            var dark = isDarkState();
-            localStorage.setItem(STORAGE_KEY, dark ? 'dark' : 'light');
-          }
-        });
-      });
-      observer.observe(html, { attributes: true, attributeFilter: ['class', 'data-theme', 'data-color-mode'] });
-
-      // Initial: respect system-set class/attribute first, then localStorage, then system preference
-      if (html.classList.contains('dark') || html.getAttribute('data-theme') === 'dark' || html.getAttribute('data-color-mode') === 'dark') {
-        setDarkClass(true);
-      } else if (html.classList.contains('light') || html.getAttribute('data-theme') === 'light' || html.getAttribute('data-color-mode') === 'light') {
-        setDarkClass(false);
-      } else {
+      // Always trust external system theme class first
+      var external = syncFromHtml();
+      if (!external) {
         var saved = localStorage.getItem(STORAGE_KEY) || 'system';
         applyTheme(saved);
       }
+
+      // Watch for future changes from system theme switcher
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+          if (m.type === 'attributes' && m.attributeName === 'class') {
+            syncFromHtml();
+          }
+        });
+      });
+      observer.observe(html, { attributes: true, attributeFilter: ['class'] });
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
         if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system') applyTheme('system');
