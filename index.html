@@ -106,14 +106,17 @@
       }
 
       function setThemeButtonIcon(theme) {
+        var moon = document.getElementById('themeIconMoon');
+        var sun = document.getElementById('themeIconSun');
         var btn = document.getElementById('themeToggle');
-        if (!btn) return;
         if (theme === 'dark') {
-          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-          btn.setAttribute('aria-label', '切换到浅色');
+          if (moon) moon.classList.add('hidden');
+          if (sun) sun.classList.remove('hidden');
+          if (btn) btn.setAttribute('aria-label', '切换到浅色');
         } else {
-          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
-          btn.setAttribute('aria-label', '切换到深色');
+          if (moon) moon.classList.remove('hidden');
+          if (sun) sun.classList.add('hidden');
+          if (btn) btn.setAttribute('aria-label', '切换到深色');
         }
       }
 
@@ -144,29 +147,19 @@
         applyTheme(saved);
       }
 
-      function createThemeToggle() {
-        var heroContent = document.getElementById('heroContent');
-        if (!heroContent) return;
-        var btn = document.createElement('button');
-        btn.id = 'themeToggle';
-        btn.className = 'absolute z-[10001] w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-black/20 backdrop-blur-md text-white hover:border-lime/60 hover:text-lime hover:bg-black/30 transition-all duration-200 shadow-lg';
-        btn.type = 'button';
-        btn.style.right = '2rem';
-        btn.style.bottom = '8%';
-        btn.addEventListener('click', cycleTheme);
-        heroContent.appendChild(btn);
-        setThemeButtonIcon(localStorage.getItem(STORAGE_KEY) === 'dark' ||
-          (localStorage.getItem(STORAGE_KEY) !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+      function bindThemeToggle() {
+        var btn = document.getElementById('themeToggle');
+        if (btn) btn.addEventListener('click', cycleTheme);
       }
 
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
           initTheme();
-          createThemeToggle();
+          bindThemeToggle();
         });
       } else {
         initTheme();
-        createThemeToggle();
+        bindThemeToggle();
       }
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
@@ -615,6 +608,11 @@
               <circle cx="10" cy="10" r="3" fill="currentColor" class="animate-bounce"/>
             </svg>
           </div>
+
+          <button id="themeToggle" type="button" class="absolute bottom-[8%] right-6 z-[10001] w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-black/20 backdrop-blur-md text-white hover:border-lime/60 hover:text-lime hover:bg-black/30 transition-all duration-200 shadow-lg" aria-label="切换主题">
+            <svg id="themeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg id="themeIconSun" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
         </div>
       </section>
 
