@@ -56,71 +56,108 @@
     (function() {
       var html = document.documentElement;
       var STORAGE_KEY = 'shensu-theme';
+      var THEMES = {
+        light: {
+          '--color-lime': '#8dc126',
+          '--color-data': '#1e9e8e',
+          '--color-ink': '#d6d0c2',
+          '--color-paper': '#12110f',
+          '--color-muted': '#4a4944',
+          '--color-surface': '#e4e0d4',
+          '--color-surface-hover': '#d9d4c8',
+          '--color-border': '#b0ab9f',
+          '--color-border-light': '#9d988d',
+          '--color-ink-rgb': '214, 208, 194',
+          '--color-paper-rgb': '18, 17, 15',
+          '--color-surface-rgb': '228, 224, 212',
+          '--color-border-rgb': '176, 171, 159',
+          '--color-mountain-1': 'rgba(140, 120, 110, 0.45)',
+          '--color-mountain-2': 'rgba(120, 100, 90, 0.55)',
+          '--color-mountain-3': 'rgba(85, 72, 64, 0.7)'
+        },
+        dark: {
+          '--color-lime': '#c8ff4f',
+          '--color-data': '#5eead4',
+          '--color-ink': '#0c0c0b',
+          '--color-paper': '#f0ede6',
+          '--color-muted': '#6b6b65',
+          '--color-surface': '#111110',
+          '--color-surface-hover': '#181816',
+          '--color-border': '#282826',
+          '--color-border-light': '#3a3a38',
+          '--color-ink-rgb': '12, 12, 11',
+          '--color-paper-rgb': '240, 237, 230',
+          '--color-surface-rgb': '17, 17, 16',
+          '--color-border-rgb': '40, 40, 38',
+          '--color-mountain-1': 'rgba(60, 40, 35, 0.4)',
+          '--color-mountain-2': 'rgba(40, 28, 25, 0.6)',
+          '--color-mountain-3': 'rgba(22, 16, 14, 0.85)'
+        }
+      };
 
-      function hasDarkClass() {
-        return html.classList.contains('dark');
-      }
-
-      function hasLightClass() {
-        return html.classList.contains('light');
-      }
-
-      function setDarkClass(shouldDark) {
-        if (shouldDark) {
-          html.classList.add('dark');
-          html.classList.remove('light');
-        } else {
-          html.classList.remove('dark');
-          html.classList.add('light');
+      function applyVars(themeName) {
+        var vars = THEMES[themeName] || THEMES.light;
+        for (var key in vars) {
+          html.style.setProperty(key, vars[key]);
         }
       }
 
-      function syncFromHtml() {
-        if (hasDarkClass()) {
-          setDarkClass(true);
+      function isSystemDark() {
+        return html.classList.contains('dark');
+      }
+
+      function syncFromClass() {
+        if (html.classList.contains('dark')) {
+          applyVars('dark');
           localStorage.setItem(STORAGE_KEY, 'dark');
           return 'dark';
-        } else if (hasLightClass()) {
-          setDarkClass(false);
+        } else if (html.classList.contains('light')) {
+          applyVars('light');
           localStorage.setItem(STORAGE_KEY, 'light');
           return 'light';
         }
         return null;
       }
 
-      function applyTheme(theme) {
-        if (theme === 'system') {
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          setDarkClass(prefersDark);
-        } else {
-          setDarkClass(theme === 'dark');
-        }
-        localStorage.setItem(STORAGE_KEY, theme);
-      }
-
-      // Always trust external system theme class first
-      var external = syncFromHtml();
+      // Initial: trust system class first, then localStorage, then system preference
+      var external = syncFromClass();
       if (!external) {
-        var saved = localStorage.getItem(STORAGE_KEY) || 'system';
-        applyTheme(saved);
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === 'dark' || saved === 'light') {
+          applyVars(saved);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          applyVars('dark');
+        } else {
+          applyVars('light');
+        }
       }
 
-      // Watch for future changes from system theme switcher
+      // Watch system theme switcher class changes
       var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(m) {
           if (m.type === 'attributes' && m.attributeName === 'class') {
-            syncFromHtml();
+            syncFromClass();
           }
         });
       });
       observer.observe(html, { attributes: true, attributeFilter: ['class'] });
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-        if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system') applyTheme('system');
+        if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system' && !html.classList.contains('dark') && !html.classList.contains('light')) {
+          applyVars(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        }
       });
 
       window.setShensuTheme = function(theme) {
-        applyTheme(theme);
+        if (theme === 'system') {
+          html.classList.remove('dark', 'light');
+          applyVars(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        } else {
+          html.classList.remove(theme === 'dark' ? 'light' : 'dark');
+          html.classList.add(theme);
+          applyVars(theme);
+        }
+        localStorage.setItem(STORAGE_KEY, theme);
       };
       window.getShensuTheme = function() {
         return localStorage.getItem(STORAGE_KEY) || 'system';
