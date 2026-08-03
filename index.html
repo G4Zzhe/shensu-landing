@@ -98,6 +98,13 @@
         return document.documentElement;
       }
 
+      function applyVars(themeName) {
+        var vars = THEMES[themeName] || THEMES.light;
+        for (var key in vars) {
+          root().style.setProperty(key, vars[key]);
+        }
+      }
+
       function parentHtml() {
         try {
           if (window.parent && window.parent !== window) {
@@ -105,14 +112,6 @@
           }
         } catch (e) {}
         return null;
-      }
-
-      function applyVars(themeName, target) {
-        var vars = THEMES[themeName] || THEMES.light;
-        var el = target || root();
-        for (var key in vars) {
-          el.style.setProperty(key, vars[key]);
-        }
       }
 
       function isParentDark() {
@@ -147,20 +146,57 @@
         observer.observe(p, { attributes: true, attributeFilter: ['class', 'data-theme', 'data-color-mode'] });
       }
 
-      // Initial
-      var external = syncFromParent();
-      if (!external) {
-        var saved = localStorage.getItem(STORAGE_KEY);
-        if (saved === 'dark' || saved === 'light') {
-          applyVars(saved);
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          applyVars('dark');
-        } else {
-          applyVars('light');
-        }
+      function detectFromComputedBackground() {
+        try {
+          var body = document.body;
+          if (!body) return null;
+          var bg = window.getComputedStyle(body).backgroundColor;
+          if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') return null;
+          var rgb = bg.match(/\d+/g);
+          if (!rgb || rgb.length < 3) return null;
+          var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+          var luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+          return luminance > 128 ? 'light' : 'dark';
+        } catch (e) { return null; }
       }
 
-      setParentObserver();
+      function init() {
+        var external = syncFromParent();
+        if (!external) {
+          external = detectFromComputedBackground();
+          if (external) applyVars(external);
+        }
+        if (!external) {
+          var saved = localStorage.getItem(STORAGE_KEY);
+          if (saved === 'dark' || saved === 'light') {
+            applyVars(saved);
+          } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            applyVars('dark');
+          } else {
+            applyVars('light');
+          }
+        }
+        setParentObserver();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+      window.addEventListener('message', function(e) {
+        var data = e.data;
+        if (typeof data === 'string') {
+          if (data === 'theme:dark') applyVars('dark');
+          else if (data === 'theme:light') applyVars('light');
+        } else if (data && typeof data === 'object') {
+          if (data.type === 'theme' || data.theme) {
+            var t = data.theme || data.type;
+            if (t === 'dark' || t === 'light') applyVars(t);
+          }
+        }
+      });
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
         if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system' && !isParentDark()) {
