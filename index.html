@@ -54,7 +54,6 @@
   </script>
   <script>
     (function() {
-      var html = document.documentElement;
       var STORAGE_KEY = 'shensu-theme';
       var THEMES = {
         light: {
@@ -95,32 +94,61 @@
         }
       };
 
-      function applyVars(themeName) {
+      function root() {
+        return document.documentElement;
+      }
+
+      function parentHtml() {
+        try {
+          if (window.parent && window.parent !== window) {
+            return window.parent.document.documentElement;
+          }
+        } catch (e) {}
+        return null;
+      }
+
+      function applyVars(themeName, target) {
         var vars = THEMES[themeName] || THEMES.light;
+        var el = target || root();
         for (var key in vars) {
-          html.style.setProperty(key, vars[key]);
+          el.style.setProperty(key, vars[key]);
         }
       }
 
-      function isSystemDark() {
-        return html.classList.contains('dark');
+      function isParentDark() {
+        var p = parentHtml();
+        if (!p) return false;
+        return p.classList.contains('dark') || p.getAttribute('data-theme') === 'dark' || p.getAttribute('data-color-mode') === 'dark';
       }
 
-      function syncFromClass() {
-        if (html.classList.contains('dark')) {
+      function syncFromParent() {
+        var p = parentHtml();
+        if (!p) return null;
+        var dark = p.classList.contains('dark') || p.getAttribute('data-theme') === 'dark' || p.getAttribute('data-color-mode') === 'dark';
+        var light = p.classList.contains('light') || p.getAttribute('data-theme') === 'light' || p.getAttribute('data-color-mode') === 'light';
+        if (dark) {
           applyVars('dark');
-          localStorage.setItem(STORAGE_KEY, 'dark');
           return 'dark';
-        } else if (html.classList.contains('light')) {
+        } else if (light) {
           applyVars('light');
-          localStorage.setItem(STORAGE_KEY, 'light');
           return 'light';
         }
         return null;
       }
 
-      // Initial: trust system class first, then localStorage, then system preference
-      var external = syncFromClass();
+      function setParentObserver() {
+        var p = parentHtml();
+        if (!p) return;
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(m) {
+            if (m.type === 'attributes') syncFromParent();
+          });
+        });
+        observer.observe(p, { attributes: true, attributeFilter: ['class', 'data-theme', 'data-color-mode'] });
+      }
+
+      // Initial
+      var external = syncFromParent();
       if (!external) {
         var saved = localStorage.getItem(STORAGE_KEY);
         if (saved === 'dark' || saved === 'light') {
@@ -132,29 +160,18 @@
         }
       }
 
-      // Watch system theme switcher class changes
-      var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(m) {
-          if (m.type === 'attributes' && m.attributeName === 'class') {
-            syncFromClass();
-          }
-        });
-      });
-      observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+      setParentObserver();
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-        if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system' && !html.classList.contains('dark') && !html.classList.contains('light')) {
+        if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system' && !isParentDark()) {
           applyVars(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         }
       });
 
       window.setShensuTheme = function(theme) {
         if (theme === 'system') {
-          html.classList.remove('dark', 'light');
           applyVars(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         } else {
-          html.classList.remove(theme === 'dark' ? 'light' : 'dark');
-          html.classList.add(theme);
           applyVars(theme);
         }
         localStorage.setItem(STORAGE_KEY, theme);
