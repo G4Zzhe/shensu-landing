@@ -11,18 +11,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            lime: '#c8ff4f',
-            data: '#5eead4',
-            ink: '#0c0c0b',
-            paper: '#f0ede6',
-            muted: '#6b6b65',
-            surface: '#111110',
-            'surface-hover': '#181816',
-            border: '#282826',
-            'border-light': '#3a3a38',
+            lime: 'var(--color-lime)',
+            data: 'var(--color-data)',
+            ink: 'var(--color-ink)',
+            paper: 'var(--color-paper)',
+            muted: 'var(--color-muted)',
+            surface: 'var(--color-surface)',
+            'surface-hover': 'var(--color-surface-hover)',
+            border: 'var(--color-border)',
+            'border-light': 'var(--color-border-light)',
           },
           fontFamily: {
             display: ['Space Grotesk', 'Inter', 'sans-serif'],
@@ -51,10 +52,65 @@
       },
     }
   </script>
+  <script>
+    (function() {
+      function applyTheme(theme) {
+        var html = document.documentElement;
+        html.classList.remove('dark');
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          html.classList.add('dark');
+        }
+      }
+      var saved = localStorage.getItem('shensu-theme') || 'system';
+      applyTheme(saved);
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if ((localStorage.getItem('shensu-theme') || 'system') === 'system') applyTheme('system');
+      });
+      window.setShensuTheme = function(theme) {
+        localStorage.setItem('shensu-theme', theme);
+        applyTheme(theme);
+      };
+      window.getShensuTheme = function() { return localStorage.getItem('shensu-theme') || 'system'; };
+    })();
+  </script>
   <style>
+    :root {
+      --color-lime: #8dc126;
+      --color-data: #1e9e8e;
+      --color-ink: #d6d0c2;
+      --color-paper: #12110f;
+      --color-muted: #4a4944;
+      --color-surface: #e4e0d4;
+      --color-surface-hover: #d9d4c8;
+      --color-border: #b0ab9f;
+      --color-border-light: #9d988d;
+      --color-ink-rgb: 214, 208, 194;
+      --color-paper-rgb: 18, 17, 15;
+      --color-surface-rgb: 228, 224, 212;
+      --color-border-rgb: 176, 171, 159;
+      --color-mountain-1: rgba(140, 120, 110, 0.45);
+      --color-mountain-2: rgba(120, 100, 90, 0.55);
+      --color-mountain-3: rgba(85, 72, 64, 0.7);
+    }
+    .dark, :root.dark {
+      --color-ink: #0c0c0b;
+      --color-paper: #f0ede6;
+      --color-muted: #6b6b65;
+      --color-surface: #111110;
+      --color-surface-hover: #181816;
+      --color-border: #282826;
+      --color-border-light: #3a3a38;
+      --color-ink-rgb: 12, 12, 11;
+      --color-paper-rgb: 240, 237, 230;
+      --color-surface-rgb: 17, 17, 16;
+      --color-border-rgb: 40, 40, 38;
+      --color-mountain-1: rgba(60, 40, 35, 0.4);
+      --color-mountain-2: rgba(40, 28, 25, 0.6);
+      --color-mountain-3: rgba(22, 16, 14, 0.85);
+    }
     ::selection {
       background: rgba(200, 255, 79, 0.12);
-      color: #f0ede6;
+      color: var(--color-paper);
     }
     .hero-title-lime {
       animation: titlePulse 4s ease-in-out infinite;
@@ -206,6 +262,18 @@
       border-color: rgba(200, 255, 79, 0.4);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(200, 255, 79, 0.08);
     }
+    .product-tag {
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    :root:not(.dark) .product-tag {
+      color: var(--color-paper) !important;
+      background: color-mix(in srgb, var(--tag-color) 88%, transparent) !important;
+      border-color: var(--tag-color) !important;
+    }
+    :root:not(.dark) .product-tag:hover {
+      background: var(--tag-color) !important;
+      color: var(--color-ink) !important;
+    }
     .input-glow {
       position: relative;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -282,6 +350,25 @@
       position: relative;
       width: 100%;
       height: 200vh;
+      /* Hero keeps dark theme regardless of global light/dark */
+      --color-ink: #0c0c0b;
+      --color-paper: #f0ede6;
+      --color-muted: #6b6b65;
+      --color-surface: #111110;
+      --color-surface-hover: #181816;
+      --color-border: #282826;
+      --color-border-light: #3a3a38;
+      --color-ink-rgb: 12, 12, 11;
+      --color-paper-rgb: 240, 237, 230;
+      --color-surface-rgb: 17, 17, 16;
+      --color-border-rgb: 40, 40, 38;
+      --color-lime: #c8ff4f;
+      --color-data: #5eead4;
+    }
+    .hero-subtitle,
+    .scroll-indicator {
+      color: rgba(240, 237, 230, 0.92) !important;
+      text-shadow: 0 1px 16px rgba(12, 12, 11, 0.35);
     }
     .hero-sticky-inner {
       position: sticky;
@@ -310,7 +397,7 @@
       position: absolute;
       inset: 0;
       z-index: 1;
-      background: linear-gradient(180deg, rgba(12,12,11,0.35) 0%, rgba(12,12,11,0.55) 60%, rgba(12,12,11,0.95) 100%);
+      background: linear-gradient(180deg, rgba(var(--color-ink-rgb),0.35) 0%, rgba(var(--color-ink-rgb),0.55) 60%, rgba(var(--color-ink-rgb),0.95) 100%);
       transition: none;
       will-change: opacity;
     }
@@ -351,8 +438,8 @@
       background-clip: text;
     }
     .intro-stat-card {
-      background: rgba(17, 17, 16, 0.72);
-      border: 1px solid rgba(40, 40, 38, 0.85);
+      background: rgba(var(--color-surface-rgb), 0.72);
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
       backdrop-filter: blur(12px);
       border-radius: 20px;
       padding: 1.75rem 1.25rem;
@@ -362,7 +449,7 @@
     .intro-stat-card:hover {
       transform: translateY(-6px);
       border-color: rgba(200, 255, 79, 0.45);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 28px rgba(200, 255, 79, 0.1);
+      box-shadow: 0 16px 48px rgba(var(--color-paper-rgb), 0.18), 0 0 28px rgba(200, 255, 79, 0.1);
     }
     @media (max-width: 768px) {
       .intro-stat-card {
@@ -476,7 +563,7 @@
 
   <style>
     .ticker-item {
-      color: #9a9a94;
+      color: var(--color-muted);
     }
     .ticker-divider {
       color: #c8ff4f;
@@ -491,7 +578,7 @@
     <div class="max-w-7xl mx-auto relative z-10">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 reveal">
         <div class="reveal-left">
-          <p class="eyebrow font-mono text-[15px] text-[#a0a09a] tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
+          <p class="eyebrow font-mono text-[15px] text-muted tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-lime"></span>
             产品矩阵
           </p>
@@ -512,10 +599,10 @@
 
         <div id="productDetail" class="flex-1 rounded-2xl p-8 md:p-10 border border-border bg-surface/85 backdrop-blur-sm relative overflow-hidden min-h-[360px]">
           <div id="productGlow" class="absolute -top-16 -right-16 w-80 h-80 rounded-full pointer-events-none opacity-15 blur-[60px]"></div>
-          <div id="productNum" class="font-display font-extrabold relative z-0" style="font-size: clamp(64px, 10vw, 120px); color: #232320; line-height: 1"></div>
+          <div id="productNum" class="font-display font-extrabold relative z-0" style="font-size: clamp(64px, 10vw, 120px); color: var(--color-border); line-height: 1"></div>
           <div class="relative z-10 -mt-6">
             <h3 id="productTitle" class="font-display font-extrabold mb-4 leading-tight" style="font-size: clamp(28px, 4vw, 48px)"></h3>
-            <p id="productDesc" class="font-body text-sm text-[#a0a09a] leading-loose mb-8 max-w-lg"></p>
+            <p id="productDesc" class="font-body text-sm text-muted leading-loose mb-8 max-w-lg"></p>
             <div id="productTags" class="flex flex-wrap gap-2"></div>
           </div>
         </div>
@@ -528,7 +615,7 @@
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 reveal">
         <div class="reveal-left">
-          <p class="eyebrow font-mono text-[15px] text-[#a0a09a] tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
+          <p class="eyebrow font-mono text-[15px] text-muted tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-lime"></span>
             核心优势
           </p>
@@ -587,7 +674,7 @@
         <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full pointer-events-none" style="background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 60%)"></div>
         <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-12">
           <div class="lg:max-w-md reveal-left">
-            <p class="eyebrow font-mono text-[15px] text-[#a0a09a] tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
+            <p class="eyebrow font-mono text-[15px] text-muted tracking-[0.15em] uppercase mb-4 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-lime animate-pulse-dot"></span>
               开始使用
             </p>
@@ -602,7 +689,7 @@
 
           <div class="w-full lg:w-[420px] shrink-0">
             <div class="rounded-2xl border border-border bg-ink overflow-hidden">
-              <div class="flex items-center gap-2 px-4 py-3 border-b border-border bg-[#0e0e0d]">
+              <div class="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface-hover">
                 <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"></span>
                 <span class="w-2.5 h-2.5 rounded-full bg-[#febc2e]"></span>
                 <span class="w-2.5 h-2.5 rounded-full bg-[#28c840]"></span>
@@ -622,7 +709,7 @@
                 <div id="ctaSuccess" class="mt-3 mb-4 font-mono text-[11px] text-lime opacity-0 transition-opacity duration-300">✓ 演示密钥已生成，注册后获取真实密钥</div>
                 <div class="grid grid-cols-2 gap-3 pt-4 border-t border-border">
                   <a href="https://aihub.ssturing.com/sign-up" class="font-body font-semibold text-xs px-4 py-2.5 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-lime text-ink text-center">免费注册 →</a>
-                  <a href="https://aihub.ssturing.com/system-settings" class="font-body text-xs px-4 py-2.5 rounded-lg border border-border text-muted hover:border-[#555] hover:text-paper transition-all duration-200 text-center">查看文档</a>
+                  <a href="https://aihub.ssturing.com/system-settings" class="font-body text-xs px-4 py-2.5 rounded-lg border border-border text-muted hover:border-border-light hover:text-paper transition-all duration-200 text-center">查看文档</a>
                 </div>
               </div>
             </div>
@@ -635,8 +722,8 @@
   <!-- Footer -->
   <footer class="border-t border-border px-6 py-6">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-      <span class="font-display font-extrabold text-[14px] text-[#a0a09a]">神速信息</span>
-      <p class="font-mono text-[14px] tracking-wide text-[#a0a09a]">© 2026 神速信息 · Superhuman AI Gateway</p>
+      <span class="font-display font-extrabold text-[14px] text-muted">神速信息</span>
+      <p class="font-mono text-[14px] tracking-wide text-muted">© 2026 神速信息 · Superhuman AI Gateway</p>
     </div>
   </footer>
 
@@ -864,19 +951,23 @@
         if (desc) desc.textContent = p.desc;
         if (tags) {
           tags.innerHTML = p.tags.map(function(t) {
-            return '<span class="font-body text-[12px] px-3.5 py-1.5 rounded-full border tracking-normal transition-colors hover:text-paper" style="border-color:' + p.color + '60;color:' + p.color + '" data-color="' + p.color + '">' + t + '</span>';
+            return '<span class="product-tag font-body text-[12px] px-3.5 py-1.5 rounded-full border tracking-normal" style="border-color:' + p.color + '60;color:' + p.color + ';--tag-color:' + p.color + '" data-color="' + p.color + '">' + t + '</span>';
           }).join('');
 
           tags.querySelectorAll('span').forEach(function(tag) {
             tag.addEventListener('mouseenter', function() {
-              var c = this.getAttribute('data-color');
-              this.style.background = c + '15';
-              this.style.borderColor = c + '80';
+              if (document.documentElement.classList.contains('dark')) {
+                var c = this.getAttribute('data-color');
+                this.style.background = c + '15';
+                this.style.borderColor = c + '80';
+              }
             });
             tag.addEventListener('mouseleave', function() {
-              var c = this.getAttribute('data-color');
-              this.style.background = 'transparent';
-              this.style.borderColor = c + '60';
+              if (document.documentElement.classList.contains('dark')) {
+                var c = this.getAttribute('data-color');
+                this.style.background = 'transparent';
+                this.style.borderColor = c + '60';
+              }
             });
           });
         }
@@ -953,7 +1044,7 @@
             ? '<span class="why-value font-display text-[2.4rem] md:text-[3.2rem] font-extrabold text-lime leading-none tracking-tight break-words">' + item.text + '</span>'
             : '<span class="why-value font-display text-[3rem] md:text-[4rem] font-extrabold text-lime leading-none tracking-tight why-counter count-up" data-target="' + item.num + '" data-suffix="' + suffix + '" data-fallback="' + fallback + '" data-animated="0">' + initial + '</span>';
           return '<div class="why-card absolute w-[88vw] max-w-[340px] md:max-w-[380px] rounded-2xl border border-border bg-surface cursor-pointer overflow-hidden transition-all duration-500 ease-out" data-index="' + i + '" style="transform-origin:center center;transform-style:preserve-3d">' +
-            '<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-[#0e0e0d]">' +
+            '<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">' +
               '<span class="w-2 h-2 rounded-full bg-[#ff5f57]"></span>' +
               '<span class="w-2 h-2 rounded-full bg-[#febc2e]"></span>' +
               '<span class="w-2 h-2 rounded-full bg-[#28c840]"></span>' +
@@ -1409,11 +1500,11 @@
           time += 0.0008;
 
           // Distant mountains
-          drawMountain(0, 'rgba(60, 40, 35, 0.4)', height * 0.25, 0.3, height * 0.15);
+          drawMountain(0, 'var(--color-mountain-1)', height * 0.25, 0.3, height * 0.15);
           // Mid mountains
-          drawMountain(1, 'rgba(40, 28, 25, 0.6)', height * 0.22, 0.5, height * 0.08);
+          drawMountain(1, 'var(--color-mountain-2)', height * 0.22, 0.5, height * 0.08);
           // Near mountains
-          drawMountain(2, 'rgba(22, 16, 14, 0.85)', height * 0.18, 0.7, 0);
+          drawMountain(2, 'var(--color-mountain-3)', height * 0.18, 0.7, 0);
 
           animationId = requestAnimationFrame(draw);
         }
