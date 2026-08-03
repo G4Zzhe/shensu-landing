@@ -54,23 +54,59 @@
   </script>
   <script>
     (function() {
-      function applyTheme(theme) {
-        var html = document.documentElement;
-        html.classList.remove('dark');
-        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          html.classList.add('dark');
-        }
+      var html = document.documentElement;
+      var STORAGE_KEY = 'shensu-theme';
+
+      function isDarkState() {
+        return html.classList.contains('dark') || html.getAttribute('data-theme') === 'dark' || html.getAttribute('data-color-mode') === 'dark';
       }
-      var saved = localStorage.getItem('shensu-theme') || 'system';
-      applyTheme(saved);
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-        if ((localStorage.getItem('shensu-theme') || 'system') === 'system') applyTheme('system');
+
+      function setDarkClass(shouldDark) {
+        if (shouldDark) html.classList.add('dark');
+        else html.classList.remove('dark');
+      }
+
+      function applyTheme(theme) {
+        if (theme === 'system') {
+          setDarkClass(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        } else {
+          setDarkClass(theme === 'dark');
+        }
+        localStorage.setItem(STORAGE_KEY, theme);
+      }
+
+      // Observe system/theme-framework changes on <html>
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+          if (m.type === 'attributes' && (m.attributeName === 'class' || m.attributeName === 'data-theme' || m.attributeName === 'data-color-mode')) {
+            // Sync localStorage to reflect external system state
+            var dark = isDarkState();
+            localStorage.setItem(STORAGE_KEY, dark ? 'dark' : 'light');
+          }
+        });
       });
+      observer.observe(html, { attributes: true, attributeFilter: ['class', 'data-theme', 'data-color-mode'] });
+
+      // Initial: respect system-set class/attribute first, then localStorage, then system preference
+      if (html.classList.contains('dark') || html.getAttribute('data-theme') === 'dark' || html.getAttribute('data-color-mode') === 'dark') {
+        setDarkClass(true);
+      } else if (html.classList.contains('light') || html.getAttribute('data-theme') === 'light' || html.getAttribute('data-color-mode') === 'light') {
+        setDarkClass(false);
+      } else {
+        var saved = localStorage.getItem(STORAGE_KEY) || 'system';
+        applyTheme(saved);
+      }
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system') applyTheme('system');
+      });
+
       window.setShensuTheme = function(theme) {
-        localStorage.setItem('shensu-theme', theme);
         applyTheme(theme);
       };
-      window.getShensuTheme = function() { return localStorage.getItem('shensu-theme') || 'system'; };
+      window.getShensuTheme = function() {
+        return localStorage.getItem(STORAGE_KEY) || 'system';
+      };
     })();
   </script>
   <style>
