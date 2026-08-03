@@ -145,16 +145,16 @@
       }
 
       function createThemeToggle() {
-        var heroInner = document.getElementById('heroStickyInner');
-        if (!heroInner) return;
+        var heroContent = document.getElementById('heroContent');
+        if (!heroContent) return;
         var btn = document.createElement('button');
         btn.id = 'themeToggle';
         btn.className = 'absolute z-[10001] w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-black/20 backdrop-blur-md text-white hover:border-lime/60 hover:text-lime hover:bg-black/30 transition-all duration-200 shadow-lg';
         btn.type = 'button';
         btn.style.right = '2rem';
-        btn.style.bottom = '16%';
+        btn.style.bottom = '8%';
         btn.addEventListener('click', cycleTheme);
-        heroInner.appendChild(btn);
+        heroContent.appendChild(btn);
         setThemeButtonIcon(localStorage.getItem(STORAGE_KEY) === 'dark' ||
           (localStorage.getItem(STORAGE_KEY) !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
       }
