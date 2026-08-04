@@ -1,301 +1,2460 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>关于 - 神速信息</title>
   <link rel="icon" type="image/png" href="https://aihub.ssturing.com/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            lime: 'var(--color-lime)',
+            data: 'var(--color-data)',
+            ink: 'var(--color-ink)',
+            paper: 'var(--color-paper)',
+            muted: 'var(--color-muted)',
+            surface: 'var(--color-surface)',
+            'surface-hover': 'var(--color-surface-hover)',
+            border: 'var(--color-border)',
+            'border-light': 'var(--color-border-light)',
+          },
+          fontFamily: {
+            display: ['Space Grotesk', 'Inter', 'sans-serif'],
+            body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+  <script>
+    (function() {
+      var STORAGE_KEY = 'shensu-theme';
+      var THEMES = {
+        light: {
+          '--color-lime': '#8dc126',
+          '--color-data': '#1e9e8e',
+          '--color-ink': '#d6d0c2',
+          '--color-paper': '#12110f',
+          '--color-muted': '#4a4944',
+          '--color-surface': '#e4e0d4',
+          '--color-surface-hover': '#d9d4c8',
+          '--color-border': '#b0ab9f',
+          '--color-border-light': '#9d988d',
+          '--color-ink-rgb': '214, 208, 194',
+          '--color-paper-rgb': '18, 17, 15',
+          '--color-surface-rgb': '228, 224, 212',
+          '--color-border-rgb': '176, 171, 159',
+        },
+        dark: {
+          '--color-lime': '#c8ff4f',
+          '--color-data': '#5eead4',
+          '--color-ink': '#0c0c0b',
+          '--color-paper': '#f0ede6',
+          '--color-muted': '#6b6b65',
+          '--color-surface': '#111110',
+          '--color-surface-hover': '#181816',
+          '--color-border': '#282826',
+          '--color-border-light': '#3a3a38',
+          '--color-ink-rgb': '12, 12, 11',
+          '--color-paper-rgb': '240, 237, 230',
+          '--color-surface-rgb': '17, 17, 16',
+          '--color-border-rgb': '40, 40, 38',
+        }
+      };
+
+      function root() {
+        return document.documentElement;
+      }
+
+      function applyVars(themeName) {
+        var vars = THEMES[themeName] || THEMES.light;
+        for (var key in vars) {
+          root().style.setProperty(key, vars[key]);
+        }
+        // About page uses a slightly lighter ink to avoid pure-black in dark mode
+        if (themeName === 'dark') {
+          root().style.setProperty('--color-ink', '#141412');
+          root().style.setProperty('--color-ink-rgb', '20, 20, 18');
+        } else {
+          root().style.setProperty('--color-ink', vars['--color-ink']);
+          root().style.setProperty('--color-ink-rgb', vars['--color-ink-rgb']);
+        }
+      }
+
+      function setThemeButtonIcon(theme) {
+        var moon = document.getElementById('themeIconMoon');
+        var sun = document.getElementById('themeIconSun');
+        var btn = document.getElementById('themeToggle');
+        if (theme === 'dark') {
+          if (moon) moon.classList.add('hidden');
+          if (sun) sun.classList.remove('hidden');
+          if (btn) btn.setAttribute('aria-label', '切换到浅色');
+        } else {
+          if (moon) moon.classList.remove('hidden');
+          if (sun) sun.classList.add('hidden');
+          if (btn) btn.setAttribute('aria-label', '切换到深色');
+        }
+      }
+
+      function applyTheme(theme) {
+        if (theme === 'system') {
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          applyVars(prefersDark ? 'dark' : 'light');
+          setThemeButtonIcon(prefersDark ? 'dark' : 'light');
+        } else {
+          applyVars(theme);
+          setThemeButtonIcon(theme);
+        }
+        localStorage.setItem(STORAGE_KEY, theme);
+        try {
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+        } catch (e) {}
+      }
+
+      function cycleTheme() {
+        var current = localStorage.getItem(STORAGE_KEY) || 'system';
+        var order = ['system', 'light', 'dark'];
+        var next = order[(order.indexOf(current) + 1) % order.length];
+        applyTheme(next);
+      }
+
+      function initTheme() {
+        var saved = localStorage.getItem(STORAGE_KEY) || 'system';
+        applyTheme(saved);
+      }
+
+      function bindThemeToggle() {
+        var btn = document.getElementById('themeToggle');
+        if (btn) btn.addEventListener('click', cycleTheme);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          initTheme();
+          bindThemeToggle();
+        });
+      } else {
+        initTheme();
+        bindThemeToggle();
+      }
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system') applyTheme('system');
+      });
+
+      // Fade in accent glow after theme is applied
+      setTimeout(function() {
+        var heroGlow = document.getElementById('heroGlow');
+        if (heroGlow) heroGlow.classList.remove('opacity-0');
+      }, 300);
+
+      window.setShensuTheme = function(theme) {
+        applyTheme(theme);
+      };
+      window.getShensuTheme = function() {
+        return localStorage.getItem(STORAGE_KEY) || 'system';
+      };
+    })();
+  </script>
   <style>
     :root {
-      --bg-primary: #0A0A0A;
-      --bg-card: #0F0F0F;
-      --bg-card-hover: #141414;
-      --bg-section-alt: #080808;
-      --border-color: rgba(255, 255, 255, 0.06);
-      --text-primary: #FFFFFF;
-      --text-secondary: #A0A0A0;
-      --text-muted: #707070;
-      --grid-color: rgba(255, 255, 255, 0.03);
-      --accent-blue: #00E5FF;
-      --accent-green: #00E5FF;
-      --accent-purple: #00E5FF;
-      --accent-orange: #00E5FF;
-      --accent-cyan: #00E5FF;
-      --accent-pink: #00E5FF;
-      --accent: #00E5FF;
-      --radius: 2px;
-      --transition: 0.3s ease;
+      --color-lime: #8dc126;
+      --color-data: #1e9e8e;
+      --color-ink: #d6d0c2;
+      --color-paper: #12110f;
+      --color-muted: #4a4944;
+      --color-surface: #e4e0d4;
+      --color-surface-hover: #d9d4c8;
+      --color-border: #b0ab9f;
+      --color-border-light: #9d988d;
+      --color-ink-rgb: 214, 208, 194;
+      --color-paper-rgb: 18, 17, 15;
+      --color-surface-rgb: 228, 224, 212;
+      --color-border-rgb: 176, 171, 159;
     }
-    html.light, body.light, :root.light,
-    html[data-theme="light"], body[data-theme="light"], [data-theme="light"],
-    .light-mode, .theme-light {
-      --bg-primary: #f8fafc;
-      --bg-card: #ffffff;
-      --bg-card-hover: #f1f5f9;
-      --bg-section-alt: #f1f5f9;
-      --border-color: rgba(0, 0, 0, 0.08);
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #64748b;
-      --grid-color: rgba(0, 0, 0, 0.04);
-      --accent-blue: #00E5FF;
-      --accent-green: #00E5FF;
-      --accent-purple: #00E5FF;
-      --accent-orange: #00E5FF;
-      --accent-cyan: #00E5FF;
-      --accent-pink: #00E5FF;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
-    body {
-      margin: 0;
-      background: var(--bg-primary);
-      color: var(--text-secondary);
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      font-size: 1.125rem;
-      line-height: 1.9;
-      text-align: left;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      color: var(--text-primary);
-      text-align: left;
-      font-weight: 700;
-    }
-    h1 {
-      font-size: clamp(3rem, 5vw, 5rem);
-      line-height: 1.1;
-    }
-    h2 {
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      line-height: 1.2;
-    }
-    p {
-      color: var(--text-secondary);
-      font-size: 1.125rem;
-      line-height: 1.9;
-      text-align: left;
-    }
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-    button, .btn, [role="button"] {
-      padding: 14px 48px;
-      border-radius: var(--radius);
-      transition: var(--transition);
-      cursor: pointer;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-    button:hover, .btn:hover, [role="button"]:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    nav, .nav {
-      font-size: 0.9rem;
-      letter-spacing: 0.15em;
-      text-align: right;
-      text-transform: uppercase;
-    }
-    footer, .footer, .footer-note {
-      font-size: 0.75rem;
-      text-align: left;
-      color: var(--text-muted);
-    }
-    * {
-      border-radius: var(--radius);
-    }
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--accent);
-      border-radius: var(--radius);
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #00ffff;
+    .dark, :root.dark {
+      --color-ink: #141412;
+      --color-paper: #f0ede6;
+      --color-muted: #6b6b65;
+      --color-surface: #111110;
+      --color-surface-hover: #181816;
+      --color-border: #282826;
+      --color-border-light: #3a3a38;
+      --color-ink-rgb: 20, 20, 18;
+      --color-paper-rgb: 240, 237, 230;
+      --color-surface-rgb: 17, 17, 16;
+      --color-border-rgb: 40, 40, 38;
     }
     ::selection {
-      background: rgba(0, 229, 255, 0.25);
-      color: #FFFFFF;
+      background: rgba(200, 255, 79, 0.12);
+      color: var(--color-paper);
+    }
+    .bg-texture {
+      background-color: var(--color-ink);
+      background-image:
+        radial-gradient(ellipse at 50% -30%, rgba(200, 255, 79, 0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 55%, rgba(94, 234, 212, 0.08) 0%, transparent 45%),
+        radial-gradient(ellipse at 15% 45%, rgba(129, 140, 248, 0.08) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 120%, rgba(200, 255, 79, 0.05) 0%, transparent 45%);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(var(--color-paper-rgb), 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
+    }
+    .link-subtle {
+      color: var(--color-paper);
+      border-bottom: 1px solid var(--color-border);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .link-subtle:hover {
+      color: var(--color-lime);
+      border-color: var(--color-lime);
+    }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      color: var(--color-paper);
+      font-size: 14px;
+      font-weight: 500;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .btn-outline:hover {
+      border-color: var(--color-lime);
+      color: var(--color-lime);
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border-radius: 9999px;
+      background: var(--color-lime);
+      color: var(--color-ink);
+      font-size: 14px;
+      font-weight: 600;
+      transition: opacity 0.2s ease;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    .compat-code-card {
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(var(--color-surface-rgb), 0.5);
+      backdrop-filter: blur(10px);
+    }
+    .compat-code-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid rgba(var(--color-border-rgb), 0.7);
+      background: rgba(var(--color-surface-hover-rgb), 0.45);
+    }
+    .compat-code-title {
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--color-paper);
+    }
+    .compat-code-body {
+      padding: 1.25rem;
+    }
+    .compat-code-desc {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: rgba(var(--color-paper-rgb), 0.8);
+      margin-bottom: 1rem;
+    }
+    .compat-code-desc strong {
+      color: var(--color-lime);
+      font-weight: 500;
+    }
+    .compat-code-block {
+      position: relative;
+      border: 1px solid rgba(var(--color-border-rgb), 0.8);
+      border-radius: 14px;
+      background: rgba(var(--color-ink-rgb), 0.6);
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: rgba(var(--color-paper-rgb), 0.85);
+      overflow-x: auto;
+    }
+    .compat-code-block .code-comment {
+      color: rgba(var(--color-paper-rgb), 0.45);
+    }
+    .compat-code-block .code-key {
+      color: #c8ff4f;
+    }
+    .compat-code-block .code-str {
+      color: #5eead4;
+    }
+    .compat-code-block .code-var {
+      color: #a5b4fc;
+    }
+    .compat-copy-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
+      border: 1px solid rgba(var(--color-border-rgb), 0.8);
+      background: rgba(var(--color-surface-rgb), 0.7);
+      color: rgba(var(--color-paper-rgb), 0.75);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .compat-copy-btn:hover {
+      border-color: rgba(200, 255, 79, 0.55);
+      color: var(--color-lime);
+      background: rgba(var(--color-surface-rgb), 0.9);
+    }
+    .compat-copy-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+    .compat-copy-toast {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
+      background: var(--color-lime);
+      color: var(--color-ink);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+    .compat-copy-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .notice-box-float {
+      position: relative;
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 22px;
+      padding: 1.5rem 1.5rem 1.5rem 1.75rem;
+      background: rgba(var(--color-surface-rgb), 0.5);
+      backdrop-filter: blur(10px);
+      display: flex;
+      gap: 1rem;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      overflow: hidden;
+    }
+    .notice-box-float:hover {
+      transform: translateY(-4px);
+      border-color: rgba(200, 255, 79, 0.45);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 32px rgba(200, 255, 79, 0.08);
+    }
+    .notice-box-float::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      padding: 1px;
+      background: linear-gradient(90deg, transparent, transparent, rgba(200, 255, 79, 0.6), transparent, transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .notice-box-float:hover::before {
+      opacity: 1;
+      animation: noticeBorderSweep 1.5s linear infinite;
+    }
+    @keyframes noticeBorderSweep {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .notice-box-float-line {
+      position: absolute;
+      left: 0;
+      top: 1rem;
+      bottom: 1rem;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      background: var(--color-lime);
+      box-shadow: 0 0 12px rgba(200, 255, 79, 0.5);
+      animation: noticeLinePulse 2.5s ease-in-out infinite;
+    }
+    @keyframes noticeLinePulse {
+      0%, 100% { opacity: 0.7; box-shadow: 0 0 8px rgba(200, 255, 79, 0.4); }
+      50% { opacity: 1; box-shadow: 0 0 18px rgba(200, 255, 79, 0.8); }
+    }
+    .notice-box-float-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .notice-box-float-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 255, 79, 0.5);
+      background: rgba(200, 255, 79, 0.1);
+      color: var(--color-lime);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      animation: noticeIconPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes noticeIconPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(200, 255, 79, 0.3); }
+      50% { box-shadow: 0 0 12px 2px rgba(200, 255, 79, 0.15); }
+    }
+    .notice-box-float-text {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(var(--color-paper-rgb), 0.85);
+    }
+    .notice-highlight {
+      color: var(--color-lime);
+      font-weight: 500;
+      text-shadow: 0 0 12px rgba(200, 255, 79, 0.15);
+    }
+    .contact-cta-card {
+      position: relative;
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 24px;
+      padding: 2rem 1.5rem;
+      background: rgba(var(--color-surface-rgb), 0.5);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+    .contact-cta-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(200, 255, 79, 0.45);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(200, 255, 79, 0.1);
+    }
+    .contact-cta-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      padding: 1px;
+      background: radial-gradient(circle at 80% 20%, rgba(200, 255, 79, 0.15) 0%, transparent 40%),
+                  radial-gradient(circle at 20% 80%, rgba(94, 234, 212, 0.08) 0%, transparent 40%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .contact-cta-line {
+      position: absolute;
+      left: 0;
+      top: 1.25rem;
+      bottom: 1.25rem;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      background: var(--color-lime);
+      box-shadow: 0 0 16px rgba(200, 255, 79, 0.6);
+      animation: contactLinePulse 2.5s ease-in-out infinite;
+    }
+    @keyframes contactLinePulse {
+      0%, 100% { opacity: 0.7; box-shadow: 0 0 10px rgba(200, 255, 79, 0.4); }
+      50% { opacity: 1; box-shadow: 0 0 22px rgba(200, 255, 79, 0.85); }
+    }
+    .contact-cta-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    @media (min-width: 768px) {
+      .contact-cta-grid {
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 3rem;
+      }
+    }
+    .contact-cta-title {
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: var(--color-paper);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .contact-cta-title span {
+      color: var(--color-lime);
+    }
+    .contact-cta-desc {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(var(--color-paper-rgb), 0.75);
+      margin-bottom: 1.5rem;
+    }
+    .contact-cta-desc strong {
+      color: var(--color-lime);
+      font-weight: 500;
+    }
+    .contact-cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .contact-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+    .contact-cta-btn:hover {
+      transform: translateY(-2px);
+    }
+    .contact-cta-btn-primary {
+      background: var(--color-lime);
+      color: var(--color-ink);
+      box-shadow: 0 0 24px rgba(200, 255, 79, 0.15);
+    }
+    .contact-cta-btn-primary:hover {
+      box-shadow: 0 0 32px rgba(200, 255, 79, 0.3);
+    }
+    .contact-cta-btn-outline {
+      border: 1px solid var(--color-border);
+      color: var(--color-paper);
+    }
+    .contact-cta-btn-outline:hover {
+      border-color: var(--color-lime);
+      color: var(--color-lime);
+    }
+    .contact-cta-terminal {
+      border: 1px solid rgba(var(--color-border-rgb), 0.8);
+      border-radius: 16px;
+      background: rgba(var(--color-ink-rgb), 0.55);
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: rgba(var(--color-paper-rgb), 0.7);
+    }
+    .contact-cta-terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .contact-cta-terminal-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .contact-cta-terminal-line {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .contact-cta-terminal-prompt {
+      color: var(--color-lime);
+    }
+    .contact-cta-terminal-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 1.1em;
+      background: var(--color-lime);
+      vertical-align: text-bottom;
+      animation: cursorBlink 1s step-end infinite;
+    }
+    .terminal-window {
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(var(--color-surface-rgb), 0.5);
+      backdrop-filter: blur(10px);
+    }
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid rgba(var(--color-border-rgb), 0.7);
+      background: rgba(var(--color-surface-hover-rgb), 0.45);
+    }
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .terminal-title {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(var(--color-paper-rgb), 0.5);
+    }
+    .terminal-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      padding: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .terminal-split {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+    @media (min-width: 1024px) {
+      .terminal-split {
+        grid-template-columns: 1.3fr 0.7fr;
+      }
+    }
+    .terminal-left {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.75;
+      min-height: 280px;
+      overflow-wrap: break-word;
+      word-break: break-all;
+    }
+    .terminal-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      color: rgba(var(--color-paper-rgb), 0.75);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease, border-radius 0.2s ease;
+      margin-bottom: 0.35rem;
+      padding: 0.15rem 0.4rem;
+      margin-left: -0.4rem;
+      margin-right: -0.4rem;
+      border-radius: 6px;
+      flex-wrap: wrap;
+    }
+    .terminal-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .terminal-line.complete {
+      color: rgba(var(--color-paper-rgb), 0.55);
+    }
+    .terminal-line.active .terminal-prompt {
+      color: var(--color-lime);
+    }
+    .terminal-line.highlighted {
+      background: rgba(200, 255, 79, 0.08);
+      color: rgba(var(--color-paper-rgb), 0.95);
+    }
+    .terminal-prompt {
+      color: var(--color-lime);
+      flex-shrink: 0;
+      opacity: 0.85;
+    }
+    .terminal-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .terminal-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: var(--color-lime);
+      margin-left: 2px;
+      vertical-align: baseline;
+      animation: cursorBlink 1s step-end infinite;
+    }
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .terminal-line-output {
+      margin: -0.1rem 0 0.5rem 1.35rem;
+      color: rgba(var(--color-paper-rgb), 0.65);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .terminal-line-output.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .terminal-line-output strong {
+      color: var(--color-lime);
+      font-weight: 500;
+    }
+    .terminal-success {
+      color: var(--color-lime);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .terminal-success span {
+      margin-top: 0.05em;
+    }
+    .terminal-success.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .terminal-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(var(--color-border-rgb), 0.6);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .terminal-actions.visible {
+      opacity: 1;
+    }
+    .terminal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      background: rgba(var(--color-surface-rgb), 0.6);
+      color: rgba(var(--color-paper-rgb), 0.8);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .terminal-btn:hover {
+      border-color: rgba(200, 255, 79, 0.55);
+      color: var(--color-lime);
+      background: rgba(var(--color-surface-rgb), 0.8);
+    }
+    .terminal-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+    .feature-cards-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      min-width: 0;
+    }
+    .feature-mini-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0.8rem 1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(var(--color-border-rgb), 0.8);
+      background: rgba(var(--color-surface-rgb), 0.4);
+      cursor: pointer;
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, opacity 0.3s ease;
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .feature-mini-card.animate-in {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+    .feature-mini-card.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .feature-mini-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .feature-mini-card:hover,
+    .feature-mini-card.active {
+      transform: translateX(6px);
+      border-color: rgba(200, 255, 79, 0.55);
+      background: rgba(var(--color-surface-rgb), 0.7);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 18px rgba(200, 255, 79, 0.08);
+    }
+    .feature-mini-card.active {
+      border-color: var(--color-lime);
+    }
+    .feature-mini-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+    .feature-mini-card:hover .feature-mini-icon,
+    .feature-mini-card.active .feature-mini-icon {
+      transform: scale(1.1);
+    }
+    .feature-mini-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .feature-mini-title {
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--color-paper);
+      margin-bottom: 0.15rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .feature-mini-desc {
+      font-size: 0.75rem;
+      color: rgba(var(--color-paper-rgb), 0.55);
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .feature-mini-arrow {
+      display: none;
+    }
+    .feature-mini-status {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(var(--color-paper-rgb), 0.3);
+      flex-shrink: 0;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-mini-card.active .feature-mini-status {
+      background: var(--color-lime);
+      box-shadow: 0 0 8px rgba(200, 255, 79, 0.6);
+    }
+    .feature-mini-expand {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+    }
+    .feature-mini-card.active .feature-mini-expand {
+      opacity: 1;
+    }
+    .feature-mini-expand-content {
+      padding-top: 0.75rem;
+      color: rgba(var(--color-paper-rgb), 0.72);
+      font-size: 0.8rem;
+      line-height: 1.65;
+    }
+    .about-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(40px) rotateX(-80deg);
+      transform-origin: center bottom;
+      animation: aboutCharReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes aboutCharReveal {
+      from {
+        opacity: 0;
+        transform: translateY(40px) rotateX(-80deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+      }
+    }
+    .about-title {
+      perspective: 1000px;
+    }
+    .about-title-line {
+      display: inline-block;
+    }
+    .eyebrow-dot {
+      animation: eyebrowPulse 2s ease-in-out infinite;
+    }
+    @keyframes eyebrowPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(200, 255, 79, 0.4); }
+      50% { opacity: 0.6; box-shadow: 0 0 8px 2px rgba(200, 255, 79, 0.2); }
+    }
+    .about-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .about-reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      background: rgba(var(--color-surface-rgb), 0.72);
+      backdrop-filter: blur(10px);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .stat-pill:hover {
+      transform: translateY(-3px);
+      border-color: rgba(200, 255, 79, 0.45);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25), 0 0 20px rgba(200, 255, 79, 0.08);
+    }
+    .stat-pill-value {
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 700;
+      color: var(--color-lime);
+      font-size: 1rem;
+    }
+    .about-accordion-item {
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 18px;
+      background: rgba(var(--color-surface-rgb), 0.55);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .about-accordion-item:hover {
+      border-color: rgba(200, 255, 79, 0.35);
+    }
+    .about-accordion-item.active {
+      border-color: rgba(200, 255, 79, 0.55);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 24px rgba(200, 255, 79, 0.08);
+      transform: translateY(-2px);
+    }
+    .about-accordion-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      text-align: left;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--color-paper);
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: color 0.2s ease;
+    }
+    .about-accordion-header:hover {
+      color: var(--color-lime);
+    }
+    .about-accordion-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      color: var(--color-lime);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .about-accordion-item.active .about-accordion-icon {
+      transform: rotate(45deg);
+    }
+    .about-accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+      opacity: 0;
+    }
+    .about-accordion-item.active .about-accordion-body {
+      opacity: 1;
+    }
+    .about-accordion-content {
+      padding: 0 1.5rem 1.5rem;
+      color: rgba(var(--color-paper-rgb), 0.78);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    .about-card {
+      position: relative;
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 20px;
+      padding: 1.5rem;
+      background: rgba(var(--color-surface-rgb), 0.45);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+    .about-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(200, 255, 79, 0.45);
+      background: rgba(var(--color-surface-rgb), 0.65);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 28px rgba(200, 255, 79, 0.08);
+    }
+    .about-card.active {
+      border-color: rgba(200, 255, 79, 0.6);
+      background: rgba(var(--color-surface-rgb), 0.72);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 32px rgba(200, 255, 79, 0.1);
+    }
+    .about-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .about-card:hover .about-card-icon {
+      border-color: rgba(200, 255, 79, 0.5);
+      box-shadow: 0 0 16px rgba(200, 255, 79, 0.12);
+    }
+    .about-card[data-icon="key"]:hover .about-card-icon svg {
+      animation: keyRotate 0.5s ease;
+    }
+    .about-card[data-icon="shield"]:hover .about-card-icon svg {
+      animation: shieldPulse 0.5s ease;
+    }
+    .about-card[data-icon="card"]:hover .about-card-icon svg {
+      animation: cardSlide 0.5s ease;
+    }
+    .about-card[data-icon="bolt"]:hover .about-card-icon svg {
+      animation: boltFlash 0.4s ease;
+    }
+    .dash-panel {
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 22px;
+      padding: 1.5rem;
+      background: rgba(var(--color-surface-rgb), 0.5);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(200, 255, 79, 0.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .dash-panel:hover {
+      transform: translateY(-5px);
+      border-color: rgba(200, 255, 79, 0.45);
+      background: rgba(var(--color-surface-rgb), 0.68);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 28px rgba(200, 255, 79, 0.08);
+    }
+    .dash-panel:hover::before,
+    .dash-panel.active::before {
+      opacity: 1;
+    }
+    .dash-panel.active {
+      border-color: rgba(200, 255, 79, 0.6);
+      background: rgba(var(--color-surface-rgb), 0.75);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 32px rgba(200, 255, 79, 0.1);
+    }
+    .dash-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .dash-panel-status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(var(--color-paper-rgb), 0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .dash-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-lime);
+      box-shadow: 0 0 8px rgba(200, 255, 79, 0.6);
+      animation: statusBlink 2s ease-in-out infinite;
+    }
+    @keyframes statusBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+    .dash-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--color-paper);
+    }
+    .dash-panel-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
+    }
+    .dash-panel:hover .dash-panel-icon {
+      transform: scale(1.1) rotate(-4deg);
+    }
+    .dash-panel-metric {
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--color-lime);
+      line-height: 1;
+      margin: 0.75rem 0 0.35rem;
+    }
+    .dash-panel-metric-label {
+      font-size: 0.8rem;
+      color: rgba(var(--color-paper-rgb), 0.55);
+      margin-bottom: 0.75rem;
+    }
+    .dash-panel-desc {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: rgba(var(--color-paper-rgb), 0.72);
+    }
+    .dash-panel-log {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(var(--color-border-rgb), 0.6);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(var(--color-paper-rgb), 0.55);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .dash-panel-log span {
+      color: var(--color-lime);
+    }
+    .dash-panel-expand {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    }
+    .dash-panel.active .dash-panel-expand {
+      opacity: 1;
+    }
+    .dash-expand-content {
+      padding-top: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: rgba(var(--color-paper-rgb), 0.72);
+      border-top: 1px solid rgba(var(--color-border-rgb), 0.5);
+    }
+    .dash-expand-content strong {
+      color: var(--color-paper);
+      font-weight: 500;
+    }
+    .flow-section {
+      position: relative;
+    }
+    .flow-track {
+      position: absolute;
+      top: 36px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(var(--color-border-rgb), 0.6);
+      z-index: 0;
+    }
+    .flow-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-lime), rgba(94, 234, 212, 0.8));
+      box-shadow: 0 0 12px rgba(200, 255, 79, 0.4);
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .flow-section.in .flow-progress {
+      width: 100%;
+    }
+    .flow-pulse {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 12px;
+      height: 12px;
+      margin-top: -6px;
+      margin-left: -6px;
+      border-radius: 50%;
+      background: var(--color-lime);
+      box-shadow: 0 0 16px rgba(200, 255, 79, 0.8);
+      opacity: 0;
+    }
+    .flow-section.in .flow-pulse {
+      opacity: 1;
+      animation: flowPulse 2.4s linear infinite;
+      animation-delay: 1.2s;
+    }
+    @keyframes flowPulse {
+      0% { left: 0%; opacity: 1; }
+      90% { left: 100%; opacity: 1; }
+      100% { left: 100%; opacity: 0; }
+    }
+    .flow-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .flow-node {
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 20px;
+      padding: 1.25rem;
+      background: rgba(var(--color-surface-rgb), 0.5);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, opacity 0.3s ease;
+      opacity: 0.65;
+      transform: translateY(20px);
+    }
+    .flow-section.in .flow-node {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .flow-section.in .flow-node:nth-child(1) { transition-delay: 0.1s; }
+    .flow-section.in .flow-node:nth-child(2) { transition-delay: 0.3s; }
+    .flow-section.in .flow-node:nth-child(3) { transition-delay: 0.5s; }
+    .flow-section.in .flow-node:nth-child(4) { transition-delay: 0.7s; }
+    .flow-node:hover,
+    .flow-node.active {
+      transform: translateY(-6px) scale(1.02);
+      border-color: rgba(200, 255, 79, 0.55);
+      background: rgba(var(--color-surface-rgb), 0.72);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 28px rgba(200, 255, 79, 0.1);
+    }
+    .flow-node.dimmed {
+      opacity: 0.4;
+    }
+    .flow-node-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.75rem;
+      transition: transform 0.35s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .flow-node:hover .flow-node-icon,
+    .flow-node.active .flow-node-icon {
+      transform: scale(1.12);
+      border-color: rgba(200, 255, 79, 0.5);
+      box-shadow: 0 0 18px rgba(200, 255, 79, 0.15);
+    }
+    .flow-node-title {
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--color-paper);
+      margin-bottom: 0.4rem;
+    }
+    .flow-node-desc {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: rgba(var(--color-paper-rgb), 0.65);
+    }
+    .flow-node-index {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--color-border);
+      color: var(--color-paper);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(var(--color-surface-rgb), 0.8);
+      transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .flow-node:hover .flow-node-index,
+    .flow-node.active .flow-node-index {
+      background: var(--color-lime);
+      color: var(--color-ink);
+      box-shadow: 0 0 12px rgba(200, 255, 79, 0.5);
+    }
+    .flow-detail {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+      grid-column: 1 / -1;
+    }
+    .flow-detail.open {
+      opacity: 1;
+    }
+    .flow-detail-inner {
+      margin-top: 1rem;
+      border: 1px solid rgba(var(--color-border-rgb), 0.85);
+      border-radius: 18px;
+      padding: 1.25rem 1.5rem;
+      background: rgba(var(--color-surface-rgb), 0.55);
+      backdrop-filter: blur(10px);
+      text-align: left;
+      color: rgba(var(--color-paper-rgb), 0.78);
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+    .flow-detail-inner strong {
+      color: var(--color-paper);
+      font-weight: 500;
+    }
+    @media (max-width: 768px) {
+      .flow-track {
+        top: 0;
+        bottom: 0;
+        left: 24px;
+        right: auto;
+        width: 2px;
+        height: auto;
+      }
+      .flow-progress {
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(180deg, var(--color-lime), rgba(94, 234, 212, 0.8));
+        transition: height 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .flow-section.in .flow-progress {
+        width: 100%;
+        height: 100%;
+      }
+      .flow-section.in .flow-pulse {
+        animation: flowPulseVertical 2.4s linear infinite;
+      }
+      @keyframes flowPulseVertical {
+        0% { top: 0%; left: 24px; opacity: 1; }
+        90% { top: 100%; left: 24px; opacity: 1; }
+        100% { top: 100%; left: 24px; opacity: 0; }
+      }
+      .flow-grid {
+        grid-template-columns: 1fr;
+        padding-left: 56px;
+      }
+      .flow-node {
+        text-align: left;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .flow-node-icon {
+        margin: 0;
+        flex-shrink: 0;
+      }
+      .flow-node-index {
+        left: -44px;
+        top: 12px;
+        transform: none;
+      }
+      .flow-node-title {
+        margin-bottom: 0.2rem;
+      }
+      .flow-detail {
+        grid-column: 1 / -1;
+        margin-left: -56px;
+      }
+    }
+    @keyframes keyRotate {
+      0% { transform: rotate(0deg); }
+      60% { transform: rotate(-15deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes shieldPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    @keyframes cardSlide {
+      0% { transform: translateX(0); }
+      40% { transform: translateX(3px); }
+      80% { transform: translateX(-2px); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes boltFlash {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(8deg); }
+    }
+    .about-card-expand {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    }
+    .about-card.active .about-card-expand {
+      opacity: 1;
+    }
+    .about-card-expand-content {
+      padding-top: 1rem;
+      color: rgba(var(--color-paper-rgb), 0.7);
+      font-size: 0.9rem;
+      line-height: 1.75;
+      border-top: 1px solid rgba(var(--color-border-rgb), 0.6);
+      margin-top: 1rem;
+    }
+    @keyframes aboutSubtitleReveal {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.15s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
     }
   </style>
 </head>
-<body>
+<body class="bg-texture text-paper font-body text-[15px] leading-[1.85] antialiased overflow-x-hidden">
 
-<script>
-(function() {
-  function applyTheme() {
-    var html = document.querySelector('.about-container');
-    if (!html) return;
-    var body = document.body;
-    var bg = getComputedStyle(body).backgroundColor;
-    var rgb = bg.match(/\d+/g);
-    var isDark = false;
-    if (rgb) {
-      var brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
-      isDark = brightness < 128;
-    }
-    var c = isDark ? {
-      text: '#e8e8f0', textSec: '#b8b8c8', textMuted: '#9090a0',
-      cardBg: 'rgba(255,255,255,0.05)', cardBorder: 'rgba(255,255,255,0.08)',
-      cardHover: 'rgba(255,255,255,0.08)',
-      border: '#2a2a3a', highlightBg: 'rgba(102,126,234,0.1)',
-      listItemBg: 'rgba(255,255,255,0.03)',
-      iconBg1: 'rgba(59,130,246,0.15)', iconBg2: 'rgba(16,185,129,0.15)',
-      iconBg3: 'rgba(245,158,11,0.15)', iconBg4: 'rgba(139,92,246,0.15)',
-      iconFg1: '#60a5fa', iconFg2: '#34d399', iconFg3: '#fbbf24', iconFg4: '#a78bfa'
-    } : {
-      text: '#1a1a2e', textSec: '#444', textMuted: '#666',
-      cardBg: '#f7f7fc', cardBorder: '#e8e8f0',
-      cardHover: '#eeeef6',
-      border: '#e4e4ee', highlightBg: '#f2f2ff',
-      listItemBg: '#fafafe',
-      iconBg1: '#eef2ff', iconBg2: '#ecfdf5',
-      iconBg3: '#fffbeb', iconBg4: '#f5f3ff',
-      iconFg1: '#2563eb', iconFg2: '#059669', iconFg3: '#d97706', iconFg4: '#7c3aed'
-    };
-    html.style.color = c.text;
-    var subtitle = html.querySelector('.subtitle');
-    if (subtitle) { subtitle.style.color = c.textMuted; subtitle.style.borderBottomColor = c.border; }
-    var h2s = html.querySelectorAll('h2');
-    for (var i = 0; i < h2s.length; i++) h2s[i].style.color = c.text;
-    var introP = html.querySelector('.intro-text');
-    if (introP) introP.style.color = c.textSec;
-    var cards = html.querySelectorAll('.feature-card');
-    var iconBgs = [c.iconBg1, c.iconBg2, c.iconBg3, c.iconBg4];
-    var iconFgs = [c.iconFg1, c.iconFg2, c.iconFg3, c.iconFg4];
-    for (var i = 0; i < cards.length; i++) {
-      cards[i].style.background = c.cardBg;
-      cards[i].style.borderColor = c.cardBorder;
-      var h3 = cards[i].querySelector('h3');
-      if (h3) h3.style.color = c.text;
-      var p = cards[i].querySelector('p');
-      if (p) p.style.color = c.textMuted;
-      var iw = cards[i].querySelector('.icon-wrap');
-      if (iw) {
-        iw.style.background = iconBgs[i] || c.iconBg1;
-        var svg = iw.querySelector('svg');
-        if (svg) svg.style.color = iconFgs[i] || c.iconFg1;
+  <!-- Particle background -->
+  <canvas id="particleCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-80" aria-hidden="true"></canvas>
+
+  <!-- Top glow -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[500px] pointer-events-none z-[1] opacity-60" style="background: radial-gradient(ellipse at 50% 0%, rgba(200,255,79,0.18) 0%, rgba(99,102,241,0.08) 40%, transparent 70%);" aria-hidden="true"></div>
+
+  <!-- Lime accent glow -->
+  <div id="heroGlow" class="fixed top-[15%] left-[8%] w-[700px] h-[700px] pointer-events-none z-[1] opacity-0 transition-opacity duration-1000" style="background: radial-gradient(circle, rgba(200,255,79,0.12) 0%, transparent 60%); filter: blur(60px);" aria-hidden="true"></div>
+
+  <button id="themeToggle" type="button" class="pointer-events-auto fixed bottom-6 right-6 z-[10001] w-10 h-10 rounded-full flex items-center justify-center border border-border bg-surface/80 backdrop-blur-md text-paper hover:border-lime hover:text-lime transition-all duration-200 focus-ring" aria-label="切换主题">
+    <svg id="themeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg id="themeIconSun" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  </button>
+
+  <main class="relative z-10 px-6">
+
+    <header class="max-w-[820px] mx-auto pt-16 pb-20 md:pt-24 md:pb-28">
+      <p class="font-mono text-[13px] uppercase tracking-[0.2em] text-paper/85 mb-5 flex items-center gap-2.5">
+        <span class="eyebrow-dot w-2 h-2 rounded-full bg-lime"></span>
+        关于
+      </p>
+      <h1 class="about-title font-display font-bold text-paper mb-5" style="font-size: clamp(40px, 8vw, 72px); line-height: 1.05; letter-spacing: -0.03em;">
+        <span class="about-title-line">关于</span><span class="about-title-line text-lime">神速信息</span>
+      </h1>
+      <p class="about-subtitle text-lg md:text-xl">稳定高速的 AI 编程中转站</p>
+    </header>
+
+    <article class="max-w-[820px] mx-auto">
+
+      <section class="pb-20 md:pb-28">
+        <h2 class="font-display font-semibold text-2xl text-paper mb-8 about-reveal">我们是谁</h2>
+
+        <div class="space-y-4 mb-10 about-reveal" style="transition-delay: 0.1s;">
+          <div class="about-accordion-item active" data-accordion>
+            <button type="button" class="about-accordion-header focus-ring">
+              <span>什么是神速信息？</span>
+              <svg class="about-accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+            <div class="about-accordion-body">
+              <div class="about-accordion-content">
+                神速信息是一个面向开发者和团队的 AI API 聚合服务平台，致力于打造稳定、高速的大模型调用体验。
+              </div>
+            </div>
+          </div>
+
+          <div class="about-accordion-item" data-accordion>
+            <button type="button" class="about-accordion-header focus-ring">
+              <span>我们能做什么？</span>
+              <svg class="about-accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+            <div class="about-accordion-body">
+              <div class="about-accordion-content">
+                我们整合了国内主流 AI 大模型提供商的接口，通过统一的 API 网关，让您只需一个密钥即可调用所有已接入的 AI 模型。
+              </div>
+            </div>
+          </div>
+
+          <div class="about-accordion-item" data-accordion>
+            <button type="button" class="about-accordion-header focus-ring">
+              <span>为什么选择我们？</span>
+              <svg class="about-accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+            <div class="about-accordion-body">
+              <div class="about-accordion-content">
+                无需分别申请和管理多个账号，让 AI 能力接入变得简单、稳定、高效，帮助团队节省集成与运维成本。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 about-reveal" style="transition-delay: 0.3s;">
+          <div class="stat-pill">
+            <span class="stat-pill-value">40+</span>
+            <span class="stat-pill-label">模型覆盖</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-value">99.9%</span>
+            <span class="stat-pill-label">服务可用性</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-value"><50ms</span>
+            <span class="stat-pill-label">超低延迟</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-value">10x</span>
+            <span class="stat-pill-label">成本优化</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="pb-20 md:pb-28 border-t border-border pt-12 flow-section" data-flow-section>
+        <h2 class="font-display font-semibold text-2xl text-paper mb-10 about-reveal">核心优势</h2>
+
+        <div class="flow-track" aria-hidden="true">
+          <div class="flow-progress"></div>
+          <div class="flow-pulse"></div>
+        </div>
+
+        <div class="flow-grid">
+
+          <div class="flow-node" data-flow-node data-index="0">
+            <div class="flow-node-index">01</div>
+            <div class="flow-node-icon text-lime">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            </div>
+            <div>
+              <div class="flow-node-title">一键接入</div>
+              <div class="flow-node-desc">一个密钥调用所有模型</div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-flow-node data-index="1">
+            <div class="flow-node-index">02</div>
+            <div class="flow-node-icon text-data">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div class="flow-node-title">稳定可靠</div>
+              <div class="flow-node-desc">智能调度自动切换</div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-flow-node data-index="2">
+            <div class="flow-node-index">03</div>
+            <div class="flow-node-icon text-lime">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="flow-node-title">用多少付多少</div>
+              <div class="flow-node-desc">精确到 token 计费</div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-flow-node data-index="3">
+            <div class="flow-node-index">04</div>
+            <div class="flow-node-icon text-data">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div>
+              <div class="flow-node-title">高速响应</div>
+              <div class="flow-node-desc">多节点智能路由</div>
+            </div>
+          </div>
+
+          <div class="flow-detail" data-flow-detail>
+            <div class="flow-detail-inner">
+              <strong>使用场景：</strong><span data-flow-detail-text>点击上方节点查看详细说明。</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="pb-20 md:pb-28 border-t border-border pt-12">
+        <h2 class="font-display font-semibold text-2xl text-paper mb-8 about-reveal">支持的功能</h2>
+
+        <div class="terminal-window about-reveal" style="transition-delay: 0.12s;" data-terminal-window>
+          <div class="terminal-header">
+            <span class="terminal-dot bg-[#ff5f57]"></span>
+            <span class="terminal-dot bg-[#febc2e]"></span>
+            <span class="terminal-dot bg-[#28c840]"></span>
+            <span class="terminal-title">shensu ~ features</span>
+          </div>
+
+          <div class="terminal-split">
+            <div class="terminal-left" data-terminal-left>
+              <div class="terminal-line active" data-terminal-line>
+                <span class="terminal-prompt">$</span>
+                <span class="terminal-text" data-terminal-text=""><span class="terminal-cursor"></span></span>
+              </div>
+
+              <div class="terminal-actions" data-terminal-actions>
+                <button type="button" class="terminal-btn" data-terminal-replay>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  重新运行
+                </button>
+              </div>
+            </div>
+
+            <div class="feature-cards-col" data-feature-cards>
+              <div class="feature-mini-card animate-in" data-feature-card="0">
+                <div class="feature-mini-card-header">
+                  <div class="feature-mini-status"></div>
+                  <div class="feature-mini-icon bg-lime/10 text-lime">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </div>
+                  <div class="feature-mini-text">
+                    <div class="feature-mini-title">订阅转 API</div>
+                    <div class="feature-mini-desc">将 AI 订阅转为标准接口</div>
+                  </div>
+                  <svg class="feature-mini-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="feature-mini-expand">
+                  <div class="feature-mini-expand-content">将各类 AI 订阅服务统一转化为标准 API 接口，让您通过单一密钥调用多个平台的 AI 能力。</div>
+                </div>
+              </div>
+
+              <div class="feature-mini-card animate-in" data-feature-card="1">
+                <div class="feature-mini-card-header">
+                  <div class="feature-mini-status"></div>
+                  <div class="feature-mini-icon bg-data/10 text-data">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                  </div>
+                  <div class="feature-mini-text">
+                    <div class="feature-mini-title">会话保持</div>
+                    <div class="feature-mini-desc">支持多轮对话上下文</div>
+                  </div>
+                  <svg class="feature-mini-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="feature-mini-expand">
+                  <div class="feature-mini-expand-content">支持多轮对话上下文，完美兼容主流 AI 应用和聊天客户端，让连续交互体验更自然。</div>
+                </div>
+              </div>
+
+              <div class="feature-mini-card animate-in" data-feature-card="2">
+                <div class="feature-mini-card-header">
+                  <div class="feature-mini-status"></div>
+                  <div class="feature-mini-icon bg-lime/10 text-lime">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <div class="feature-mini-text">
+                    <div class="feature-mini-title">按量计费</div>
+                    <div class="feature-mini-desc">精确到 token 级别</div>
+                  </div>
+                  <svg class="feature-mini-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="feature-mini-expand">
+                  <div class="feature-mini-expand-content">精确到 token 级别的用量统计与计费，实时查看账单明细，帮助团队精准控制成本。</div>
+                </div>
+              </div>
+
+              <div class="feature-mini-card animate-in" data-feature-card="3">
+                <div class="feature-mini-card-header">
+                  <div class="feature-mini-status"></div>
+                  <div class="feature-mini-icon bg-data/10 text-data">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </div>
+                  <div class="feature-mini-text">
+                    <div class="feature-mini-title">多模型支持</div>
+                    <div class="feature-mini-desc">DeepSeek、通义千问等主流模型</div>
+                  </div>
+                  <svg class="feature-mini-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="feature-mini-expand">
+                  <div class="feature-mini-expand-content">覆盖 DeepSeek、通义千问、智谱 GLM、Kimi 等主流国产模型，持续接入更多新模型。</div>
+                </div>
+              </div>
+
+              <div class="feature-mini-card animate-in" data-feature-card="4">
+                <div class="feature-mini-card-header">
+                  <div class="feature-mini-status"></div>
+                  <div class="feature-mini-icon bg-lime/10 text-lime">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  </div>
+                  <div class="feature-mini-text">
+                    <div class="feature-mini-title">OpenAI 兼容接口</div>
+                    <div class="feature-mini-desc">无缝对接主流客户端</div>
+                  </div>
+                  <svg class="feature-mini-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="feature-mini-expand">
+                  <div class="feature-mini-expand-content">完全兼容 OpenAI API 格式，ChatGPT-Next-Web、LobeChat、ChatBox 等客户端只需修改地址和密钥即可使用。</div>
+                </div>
+              </div>
+
+              <div class="feature-mini-card animate-in" data-feature-card="5">
+                <div class="feature-mini-card-header">
+                  <div class="feature-mini-status"></div>
+                  <div class="feature-mini-icon bg-data/10 text-data">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div class="feature-mini-text">
+                    <div class="feature-mini-title">团队管理</div>
+                    <div class="feature-mini-desc">多用户、分组配额与权限</div>
+                  </div>
+                  <svg class="feature-mini-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="feature-mini-expand">
+                  <div class="feature-mini-expand-content">支持多用户、分组配额与权限管理，适合团队协作场景，统一管控 API 调用与费用支出。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="pb-20 md:pb-28">
+        <div class="notice-box-float about-reveal">
+          <div class="notice-box-float-line"></div>
+          <div class="notice-box-float-content">
+            <div class="notice-box-float-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
+            <p class="notice-box-float-text">
+              所有接口均兼容 <span class="notice-highlight">OpenAI API</span> 格式，您现有的 AI 客户端只需修改 <span class="notice-highlight">API 地址</span> 和 <span class="notice-highlight">密钥</span> 即可无缝切换。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="pb-24 md:pb-32 border-t border-border pt-12">
+        <div class="contact-cta-card about-reveal">
+          <div class="contact-cta-line"></div>
+          <div class="contact-cta-grid">
+            <div>
+              <h2 class="contact-cta-title">联系我们 · <span>开始接入</span></h2>
+              <p class="contact-cta-desc">
+                如有问题、建议或合作需求，请登录后在<strong>平台控制台</strong>提交工单，或发送邮件至 <strong>support@example.com</strong>。
+              </p>
+              <div class="contact-cta-actions">
+                <a href="https://aihub.ssturing.com/sign-up" class="contact-cta-btn contact-cta-btn-primary focus-ring">
+                  免费注册
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="https://aihub.ssturing.com/system-settings" class="contact-cta-btn contact-cta-btn-outline focus-ring">
+                  查看文档
+                </a>
+              </div>
+            </div>
+
+            <div class="contact-cta-terminal">
+              <div class="contact-cta-terminal-header">
+                <span class="contact-cta-terminal-dot bg-[#ff5f57]"></span>
+                <span class="contact-cta-terminal-dot bg-[#febc2e]"></span>
+                <span class="contact-cta-terminal-dot bg-[#28c840]"></span>
+              </div>
+              <div class="contact-cta-terminal-line">
+                <span class="contact-cta-terminal-prompt">$</span>
+                <span>shensu support --contact</span>
+              </div>
+              <div class="contact-cta-terminal-line" style="color: rgba(var(--color-paper-rgb), 0.55); margin-top: 0.3rem;">
+                > 工单：平台控制台内提交
+              </div>
+              <div class="contact-cta-terminal-line" style="color: rgba(var(--color-paper-rgb), 0.55);">
+                > 邮箱：support@example.com<span class="contact-cta-terminal-cursor"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <footer class="border-t border-border px-6 py-8">
+    <div class="max-w-[820px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <span class="font-display font-semibold text-[15px] text-paper">神速信息</span>
+      <p class="font-mono text-[13px] tracking-wide text-muted">© 2026 神速信息 · 稳定高速的 AI 编程中转站</p>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // ===== Particle background (matches index.html) =====
+      var canvas = document.getElementById('particleCanvas');
+      if (!canvas || window.matchMedia('(pointer: coarse)').matches) {
+        if (canvas) canvas.style.display = 'none';
+        return;
       }
-      cards[i].onmouseenter = (function(card) { return function() { card.style.background = c.cardHover; }; })(cards[i]);
-      cards[i].onmouseleave = (function(card) { return function() { card.style.background = c.cardBg; }; })(cards[i]);
-    }
-    var lis = html.querySelectorAll('ul li');
-    for (var i = 0; i < lis.length; i++) {
-      lis[i].style.color = c.textSec;
-      lis[i].style.background = c.listItemBg;
-    }
-    var styleTag = document.getElementById('about-dynamic-style');
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = 'about-dynamic-style';
-      document.head.appendChild(styleTag);
-    }
-    styleTag.textContent = '.about-container ul li::before { color: ' + c.iconFg1 + '; }';
-    var hb = html.querySelector('.highlight-box');
-    if (hb) {
-      hb.style.background = c.highlightBg;
-      hb.style.color = c.text;
-      var strong = hb.querySelector('strong');
-      if (strong) strong.style.color = c.text;
-    }
-    var ps = html.querySelectorAll('p');
-    for (var i = 0; i < ps.length; i++) {
-      if (!ps[i].className && ps[i].closest('.contact-section')) ps[i].style.color = c.textSec;
-    }
-    var footer = html.querySelector('.footer-note');
-    if (footer) { footer.style.color = c.textMuted; footer.style.borderTopColor = c.border; }
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(applyTheme, 150); });
-  } else {
-    setTimeout(applyTheme, 150);
-  }
-  var observer = new MutationObserver(applyTheme);
-  observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
-})();
-</script>
+      var ctx = canvas.getContext('2d');
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var width, height;
+      var particles = [];
+      var maxParticles = 100;
+      var connectionDistance = 140;
+      var mouse = { x: -9999, y: -9999, active: false };
+      var animationId = null;
+      var isVisible = true;
+      var frameCount = 0;
 
-<div class="about-container" style="max-width:820px;margin:0 auto;padding:48px 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.8;">
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+      }
 
-  <h1 style="font-size:2.2em;font-weight:700;margin-bottom:8px;letter-spacing:-0.5px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">关于神速信息</h1>
-  <p class="subtitle" style="font-size:1.15em;margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid;font-weight:400;">稳定高速的 AI 编程中转站</p>
+      function createParticles() {
+        particles = [];
+        for (var i = 0; i < maxParticles; i++) {
+          particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: Math.random() * 1.8 + 0.5,
+            alpha: Math.random() * 0.45 + 0.2,
+            pulse: Math.random() * Math.PI * 2,
+            color: Math.random() > 0.85 ? '129, 140, 248' : '200, 255, 79'
+          });
+        }
+      }
 
-  <h2 style="font-size:1.35em;font-weight:600;margin-top:40px;margin-bottom:16px;letter-spacing:-0.3px;">我们是谁</h2>
-  <p class="intro-text" style="font-size:1.05em;line-height:1.9;margin-bottom:16px;">
-    神速信息是一个面向开发者和团队的 AI API 聚合服务平台。我们整合了国内主流 AI 大模型提供商的接口，通过统一的 API 网关，让您只需一个密钥即可调用所有已接入的 AI 模型，无需分别申请和管理多个账号。
-  </p>
+      function draw() {
+        if (!isVisible) return;
+        frameCount++;
+        ctx.clearRect(0, 0, width, height);
 
-  <h2 style="font-size:1.35em;font-weight:600;margin-top:40px;margin-bottom:16px;letter-spacing:-0.3px;">核心优势</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:28px 0;">
-    <div class="feature-card" style="border-radius:14px;padding:28px 24px;border:1px solid;min-height:160px;display:flex;flex-direction:column;justify-content:flex-start;">
-      <div class="icon-wrap" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:1.3em;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-      </div>
-      <h3 style="font-size:1.05em;font-weight:600;margin-bottom:10px;letter-spacing:-0.2px;">一键接入</h3>
-      <p style="font-size:0.9em;margin:0;line-height:1.7;">获取一个 API 密钥，即可调用所有已接入的 AI 模型，无需分别申请。</p>
-    </div>
-    <div class="feature-card" style="border-radius:14px;padding:28px 24px;border:1px solid;min-height:160px;display:flex;flex-direction:column;justify-content:flex-start;">
-      <div class="icon-wrap" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:1.3em;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <h3 style="font-size:1.05em;font-weight:600;margin-bottom:10px;letter-spacing:-0.2px;">稳定可靠</h3>
-      <p style="font-size:0.9em;margin:0;line-height:1.7;">智能调度多个上游账号，自动切换和负载均衡，告别频繁报错。</p>
-    </div>
-    <div class="feature-card" style="border-radius:14px;padding:28px 24px;border:1px solid;min-height:160px;display:flex;flex-direction:column;justify-content:flex-start;">
-      <div class="icon-wrap" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:1.3em;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      </div>
-      <h3 style="font-size:1.05em;font-weight:600;margin-bottom:10px;letter-spacing:-0.2px;">用多少付多少</h3>
-      <p style="font-size:0.9em;margin:0;line-height:1.7;">按实际使用量计费，支持设置配额上限，团队用量一目了然。</p>
-    </div>
-    <div class="feature-card" style="border-radius:14px;padding:28px 24px;border:1px solid;min-height:160px;display:flex;flex-direction:column;justify-content:flex-start;">
-      <div class="icon-wrap" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:1.3em;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <h3 style="font-size:1.05em;font-weight:600;margin-bottom:10px;letter-spacing:-0.2px;">高速响应</h3>
-      <p style="font-size:0.9em;margin:0;line-height:1.7;">国内多节点部署，智能路由选择最优线路，确保低延迟高吞吐。</p>
-    </div>
-  </div>
+        var time = Date.now() * 0.001;
+        var i, j, p, dist, lineAlpha;
 
-  <h2 style="font-size:1.35em;font-weight:600;margin-top:40px;margin-bottom:16px;letter-spacing:-0.3px;">支持的功能</h2>
-  <ul style="list-style:none;padding-left:0;margin:20px 0;">
-    <li style="margin-bottom:10px;padding:10px 16px;border-radius:8px;font-size:0.98em;line-height:1.7;"><strong>订阅转 API</strong> — 将各类 AI 订阅服务统一转化为标准 API 接口</li>
-    <li style="margin-bottom:10px;padding:10px 16px;border-radius:8px;font-size:0.98em;line-height:1.7;"><strong>会话保持</strong> — 支持多轮对话上下文，完美兼容主流 AI 应用</li>
-    <li style="margin-bottom:10px;padding:10px 16px;border-radius:8px;font-size:0.98em;line-height:1.7;"><strong>按量计费</strong> — 精确到 token 级别的用量统计与计费</li>
-    <li style="margin-bottom:10px;padding:10px 16px;border-radius:8px;font-size:0.98em;line-height:1.7;"><strong>多模型支持</strong> — 覆盖 DeepSeek、通义千问、智谱 GLM、Kimi 等主流国产模型</li>
-    <li style="margin-bottom:10px;padding:10px 16px;border-radius:8px;font-size:0.98em;line-height:1.7;"><strong>OpenAI 兼容接口</strong> — 无缝对接 ChatGPT-Next-Web、LobeChat 等客户端</li>
-    <li style="margin-bottom:10px;padding:10px 16px;border-radius:8px;font-size:0.98em;line-height:1.7;"><strong>团队管理</strong> — 支持多用户、分组配额与权限管理</li>
-  </ul>
+        for (i = 0; i < particles.length; i++) {
+          p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
 
-  <div class="highlight-box" style="border-left:4px solid #667eea;border-radius:10px;padding:22px 26px;margin:32px 0;font-size:1em;line-height:1.8;">
-    <strong style="font-weight:600;"> 提示：</strong>所有接口均兼容 OpenAI API 格式，您现有的 AI 客户端只需修改 API 地址和密钥即可无缝切换。
-  </div>
+          if (mouse.active) {
+            var dx = p.x - mouse.x;
+            var dy = p.y - mouse.y;
+            var mDist = Math.sqrt(dx * dx + dy * dy);
+            if (mDist < 220 && mDist > 0) {
+              var force = (220 - mDist) / 220;
+              p.x += (dx / mDist) * force * 3;
+              p.y += (dy / mDist) * force * 3;
+            }
+          }
 
-  <div class="contact-section" style="margin-top:40px;">
-    <h2 style="font-size:1.35em;font-weight:600;margin-top:40px;margin-bottom:16px;letter-spacing:-0.3px;">联系我们</h2>
-    <p style="font-size:1em;margin-bottom:16px;">
-      如有任何问题、建议或合作需求，欢迎通过平台内工单系统或邮件与我们联系，我们将尽快回复您。
-    </p>
-  </div>
+          if (p.x < -10) p.x = width + 10;
+          if (p.x > width + 10) p.x = -10;
+          if (p.y < -10) p.y = height + 10;
+          if (p.y > height + 10) p.y = -10;
 
-  <div class="footer-note" style="margin-top:48px;padding-top:28px;border-top:1px solid;text-align:center;font-size:0.88em;letter-spacing:0.3px;">
-    © 2026 神速信息 · 稳定高速的 AI 编程中转站
-  </div>
+          var pulseAlpha = p.alpha + Math.sin(time * 1.2 + p.pulse) * 0.12;
+          pulseAlpha = Math.max(0.15, Math.min(0.9, pulseAlpha));
 
-</div>
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + p.color + ', ' + pulseAlpha + ')';
+          ctx.fill();
+
+          if (p.radius > 1.6) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius * 4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + p.color + ', ' + pulseAlpha * 0.12 + ')';
+            ctx.fill();
+          }
+        }
+
+        var skip = dpr > 1 && frameCount % 2 === 0;
+        if (!skip) {
+          for (i = 0; i < particles.length; i++) {
+            p = particles[i];
+            for (j = i + 1; j < particles.length; j++) {
+              var other = particles[j];
+              var dx = p.x - other.x;
+              var dy = p.y - other.y;
+              dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < connectionDistance) {
+                lineAlpha = (1 - dist / connectionDistance) * 0.32;
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(other.x, other.y);
+                ctx.strokeStyle = 'rgba(200, 255, 79, ' + lineAlpha + ')';
+                ctx.lineWidth = 0.9;
+                ctx.stroke();
+              }
+            }
+          }
+        }
+
+        animationId = requestAnimationFrame(draw);
+      }
+
+      function onMouseMove(e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+      }
+
+      function onMouseLeave() {
+        mouse.active = false;
+      }
+
+      function onVisibilityChange() {
+        isVisible = !document.hidden;
+        if (isVisible && !animationId) draw();
+      }
+
+      resize();
+      createParticles();
+      draw();
+
+      window.addEventListener('resize', function() {
+        resize();
+        createParticles();
+      }, { passive: true });
+      window.addEventListener('mousemove', onMouseMove, { passive: true });
+      document.body.addEventListener('mouseleave', onMouseLeave, { passive: true });
+      document.addEventListener('visibilitychange', onVisibilityChange);
+    })();
+
+    // ===== About header character reveal =====
+    (function() {
+      var title = document.querySelector('.about-title');
+      if (!title) return;
+      var lines = title.querySelectorAll('.about-title-line');
+      var charDelay = 0.06;
+      var lineDelay = 0.2;
+      lines.forEach(function(line, lineIndex) {
+        var text = line.textContent;
+        line.innerHTML = '';
+        var chars = text.split('');
+        chars.forEach(function(char, charIndex) {
+          var span = document.createElement('span');
+          span.className = 'about-char';
+          span.textContent = char;
+          span.style.animationDelay = (lineIndex * lineDelay + charIndex * charDelay) + 's';
+          line.appendChild(span);
+        });
+      });
+    })();
+
+    // ===== About reveal animations =====
+    (function() {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.about-reveal').forEach(function(el) {
+        observer.observe(el);
+      });
+    })();
+
+    // ===== About accordion =====
+    (function() {
+      var items = document.querySelectorAll('[data-accordion]');
+      items.forEach(function(item) {
+        var header = item.querySelector('.about-accordion-header');
+        var body = item.querySelector('.about-accordion-body');
+        if (!header || !body) return;
+
+        function setHeight() {
+          if (item.classList.contains('active')) {
+            body.style.maxHeight = body.scrollHeight + 'px';
+          } else {
+            body.style.maxHeight = '0px';
+          }
+        }
+
+        header.addEventListener('click', function() {
+          var isActive = item.classList.contains('active');
+          items.forEach(function(other) {
+            other.classList.remove('active');
+            var otherBody = other.querySelector('.about-accordion-body');
+            if (otherBody) otherBody.style.maxHeight = '0px';
+          });
+          if (!isActive) {
+            item.classList.add('active');
+            body.style.maxHeight = body.scrollHeight + 'px';
+          }
+        });
+
+        setHeight();
+        window.addEventListener('resize', setHeight, { passive: true });
+      });
+    })();
+
+    // ===== About feature cards =====
+    (function() {
+      var cards = document.querySelectorAll('[data-card]');
+      cards.forEach(function(card) {
+        var expand = card.querySelector('.about-card-expand');
+        if (!expand) return;
+
+        function setHeight() {
+          if (card.classList.contains('active')) {
+            expand.style.maxHeight = expand.scrollHeight + 'px';
+          } else {
+            expand.style.maxHeight = '0px';
+          }
+        }
+
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('a') || e.target.closest('button')) return;
+          var isActive = card.classList.contains('active');
+          cards.forEach(function(other) {
+            other.classList.remove('active');
+            var otherExpand = other.querySelector('.about-card-expand');
+            if (otherExpand) otherExpand.style.maxHeight = '0px';
+          });
+          if (!isActive) {
+            card.classList.add('active');
+            expand.style.maxHeight = expand.scrollHeight + 'px';
+          }
+        });
+
+        setHeight();
+        window.addEventListener('resize', setHeight, { passive: true });
+      });
+    })();
+
+    // ===== Dashboard panels =====
+    (function() {
+      var panels = document.querySelectorAll('[data-panel]');
+      var metricIntervals = [];
+
+      function animateValue(el, start, end, duration, suffix, formatter) {
+        var startTime = null;
+        function step(ts) {
+          if (!startTime) startTime = ts;
+          var p = Math.min((ts - startTime) / duration, 1);
+          var ease = 1 - Math.pow(1 - p, 3);
+          var current = start + (end - start) * ease;
+          el.textContent = (formatter ? formatter(current) : Math.floor(current)) + suffix;
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      function startMetrics(panel) {
+        var metrics = panel.querySelectorAll('[data-metric]');
+        metrics.forEach(function(metric) {
+          var type = metric.getAttribute('data-metric');
+          var interval = null;
+          if (type === 'models') {
+            interval = setInterval(function() {
+              var base = 40 + Math.floor(Math.random() * 3);
+              metric.textContent = base + '+';
+            }, 2200);
+          } else if (type === 'uptime') {
+            interval = setInterval(function() {
+              var val = (99.85 + Math.random() * 0.14).toFixed(2);
+              metric.textContent = val + '%';
+            }, 1800);
+          } else if (type === 'tokens') {
+            var target = 1200000 + Math.floor(Math.random() * 800000);
+            animateValue(metric, 0, target, 1500, '', function(n) { return n.toLocaleString(); });
+            interval = setInterval(function() {
+              var current = parseInt(metric.textContent.replace(/,/g, ''), 10) || 0;
+              var next = current + Math.floor(Math.random() * 1200);
+              metric.textContent = next.toLocaleString();
+            }, 900);
+          } else if (type === 'latency') {
+            interval = setInterval(function() {
+              var ms = 28 + Math.floor(Math.random() * 35);
+              metric.textContent = '<' + ms + 'ms';
+            }, 1400);
+          }
+          if (interval) metricIntervals.push(interval);
+        });
+      }
+
+      function stopMetrics() {
+        metricIntervals.forEach(function(id) { clearInterval(id); });
+        metricIntervals = [];
+      }
+
+      var sectionObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            panels.forEach(function(panel) { startMetrics(panel); });
+          } else {
+            stopMetrics();
+          }
+        });
+      }, { threshold: 0.2 });
+
+      var section = document.querySelector('.dash-panel')?.closest('section');
+      if (section) sectionObserver.observe(section);
+
+      panels.forEach(function(panel) {
+        var expand = panel.querySelector('.dash-panel-expand');
+        if (!expand) return;
+
+        function setHeight() {
+          if (panel.classList.contains('active')) {
+            expand.style.maxHeight = expand.scrollHeight + 'px';
+          } else {
+            expand.style.maxHeight = '0px';
+          }
+        }
+
+        panel.addEventListener('click', function(e) {
+          if (e.target.closest('a') || e.target.closest('button')) return;
+          var isActive = panel.classList.contains('active');
+          panels.forEach(function(other) {
+            other.classList.remove('active');
+            var otherExpand = other.querySelector('.dash-panel-expand');
+            if (otherExpand) otherExpand.style.maxHeight = '0px';
+          });
+          if (!isActive) {
+            panel.classList.add('active');
+            expand.style.maxHeight = expand.scrollHeight + 'px';
+          }
+        });
+
+        setHeight();
+        window.addEventListener('resize', setHeight, { passive: true });
+      });
+    })();
+
+    // ===== Flow section =====
+    (function() {
+      var flowSection = document.querySelector('[data-flow-section]');
+      if (!flowSection) return;
+      var nodes = flowSection.querySelectorAll('[data-flow-node]');
+      var detail = flowSection.querySelector('[data-flow-detail]');
+      var detailText = flowSection.querySelector('[data-flow-detail-text]');
+
+      var details = [
+        '注册后，只需在请求头中配置一个密钥，即可通过 OpenAI 兼容格式调用 DeepSeek、通义千问、智谱 GLM、Kimi 等主流模型。无需维护多个上游账号，接入成本大幅降低。',
+        '平台实时监控各上游通道健康状态，遇到故障自动降级、重试与切换，确保服务可用性达到 99.9% 以上，让您的应用稳定运行。',
+        '精确到 token 级别的用量统计与计费，支持为团队、项目或个人设置配额上限，实时查看账单明细，避免预算超支。',
+        '依托国内多节点部署与智能就近路由，平均首 token 延迟低于 100ms，推理速度相比直接调用官方接口提升 10 倍以上。'
+      ];
+
+      function setDetailHeight() {
+        if (detail.classList.contains('open')) {
+          detail.style.maxHeight = detail.scrollHeight + 'px';
+        } else {
+          detail.style.maxHeight = '0px';
+        }
+      }
+
+      nodes.forEach(function(node, index) {
+        node.addEventListener('click', function() {
+          var isActive = node.classList.contains('active');
+          nodes.forEach(function(n) { n.classList.remove('active', 'dimmed'); });
+          if (!isActive) {
+            node.classList.add('active');
+            nodes.forEach(function(n) {
+              if (!n.classList.contains('active')) n.classList.add('dimmed');
+            });
+            if (detailText) detailText.textContent = details[index];
+            detail.classList.add('open');
+          } else {
+            detail.classList.remove('open');
+          }
+          setDetailHeight();
+        });
+      });
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            flowSection.classList.add('in');
+          }
+        });
+      }, { threshold: 0.2 });
+      observer.observe(flowSection);
+
+      window.addEventListener('resize', setDetailHeight, { passive: true });
+    })();
+
+    // ===== Feature tags keyboard focus =====
+    (function() {
+      var tags = document.querySelectorAll('.feature-tag');
+      tags.forEach(function(tag) {
+        tag.addEventListener('focus', function() { tag.classList.add('active'); });
+        tag.addEventListener('blur', function() { tag.classList.remove('active'); });
+      });
+    })();
+
+    // ===== Terminal typewriter with feature cards =====
+    (function() {
+      var windowEl = document.querySelector('[data-terminal-window]');
+      var leftEl = document.querySelector('[data-terminal-left]');
+      var lineTemplate = document.querySelector('[data-terminal-line]');
+      var actionsEl = document.querySelector('[data-terminal-actions]');
+      var replayBtn = document.querySelector('[data-terminal-replay]');
+      var cards = document.querySelectorAll('[data-feature-card]');
+      if (!windowEl || !leftEl || !lineTemplate) return;
+
+      var commands = [
+        { cmd: 'shensu features --list', output: null, card: null },
+        { cmd: 'shensu convert subscription --to=api', output: '<strong>订阅转 API</strong>：将各类 AI 订阅服务统一转化为标准 API 接口', card: 0 },
+        { cmd: 'shensu session --context=multi-turn', output: '<strong>会话保持</strong>：支持多轮对话上下文，完美兼容主流 AI 应用', card: 1 },
+        { cmd: 'shensu billing --precision=token', output: '<strong>按量计费</strong>：精确到 token 级别的用量统计与计费', card: 2 },
+        { cmd: 'shensu models --include=deepseek,tongyi,glm,kimi', output: '<strong>多模型支持</strong>：覆盖 DeepSeek、通义千问、智谱 GLM、Kimi 等主流国产模型', card: 3 },
+        { cmd: 'shensu compat --format=openai', output: '<strong>OpenAI 兼容接口</strong>：无缝对接 ChatGPT-Next-Web、LobeChat 等客户端', card: 4 },
+        { cmd: 'shensu team --users --quota --roles', output: '<strong>团队管理</strong>：支持多用户、分组配额与权限管理', card: 5 }
+      ];
+
+      var successLine = document.createElement('div');
+      successLine.className = 'terminal-success';
+      successLine.innerHTML = '<span>✓</span> 7 modules ready. Compatible with OpenAI API format.';
+
+      var extraLine = document.createElement('div');
+      extraLine.className = 'terminal-line-output';
+      extraLine.innerHTML = '<strong>提示：</strong>所有接口均兼容 OpenAI API 格式，您现有的 AI 客户端只需修改 API 地址和密钥即可无缝切换。';
+
+      var typing = false;
+      var timeouts = [];
+      var currentLines = [];
+
+      function setActiveCard(index) {
+        cards.forEach(function(card, i) {
+          if (i === index) {
+            card.classList.add('active');
+          } else {
+            card.classList.remove('active');
+          }
+          var expand = card.querySelector('.feature-mini-expand');
+          if (expand) {
+            if (i === index) {
+              expand.style.maxHeight = expand.scrollHeight + 'px';
+            } else {
+              expand.style.maxHeight = '0px';
+            }
+          }
+        });
+        highlightCommandLine(index);
+      }
+
+      function highlightCommandLine(index) {
+        currentLines.forEach(function(line) {
+          if (!line.classList.contains('terminal-line')) return;
+          var cmdIndex = parseInt(line.getAttribute('data-cmd-index'), 10);
+          if (cmdIndex === index) {
+            line.classList.add('highlighted');
+          } else {
+            line.classList.remove('highlighted');
+          }
+        });
+      }
+
+      function clearTerminal() {
+        timeouts.forEach(function(id) { clearTimeout(id); });
+        timeouts = [];
+        currentLines.forEach(function(el) { if (el.parentNode) el.parentNode.removeChild(el); });
+        currentLines = [];
+        if (successLine.parentNode) successLine.parentNode.removeChild(successLine);
+        if (extraLine.parentNode) extraLine.parentNode.removeChild(extraLine);
+        lineTemplate.classList.add('visible', 'active');
+        var textSpan = lineTemplate.querySelector('[data-terminal-text]');
+        textSpan.innerHTML = '<span class="terminal-cursor"></span>';
+        cards.forEach(function(card) { card.classList.remove('active'); });
+        cards.forEach(function(card) {
+          var expand = card.querySelector('.feature-mini-expand');
+          if (expand) expand.style.maxHeight = '0px';
+        });
+      }
+
+      function createLine(cmdIndex, outputHtml) {
+        var line = lineTemplate.cloneNode(true);
+        line.removeAttribute('data-terminal-line');
+        line.classList.add('visible');
+        if (cmdIndex !== undefined) line.setAttribute('data-cmd-index', cmdIndex);
+        line.querySelector('[data-terminal-text]').innerHTML = '<span class="terminal-cursor"></span>';
+
+        var output = null;
+        if (outputHtml) {
+          output = document.createElement('div');
+          output.className = 'terminal-line-output';
+          output.innerHTML = outputHtml;
+          line._outputEl = output;
+        }
+        return { line: line, output: output };
+      }
+
+      function typeText(line, text, callback) {
+        var textSpan = line.querySelector('[data-terminal-text]');
+        var i = 0;
+        function step() {
+          if (i < text.length) {
+            textSpan.textContent = text.slice(0, i + 1);
+            var cursor = document.createElement('span');
+            cursor.className = 'terminal-cursor';
+            textSpan.appendChild(cursor);
+            i++;
+            timeouts.push(setTimeout(step, 28 + Math.random() * 35));
+          } else {
+            textSpan.textContent = text;
+            var cursor = document.createElement('span');
+            cursor.className = 'terminal-cursor';
+            textSpan.appendChild(cursor);
+            if (callback) callback();
+          }
+        }
+        step();
+      }
+
+      function runTerminal() {
+        if (typing) return;
+        typing = true;
+        clearTerminal();
+        if (actionsEl) actionsEl.classList.remove('visible');
+
+        var delay = 0;
+        var prevLine = lineTemplate;
+
+        commands.forEach(function(item, index) {
+          delay += (index === 0 ? 300 : 750);
+          timeouts.push(setTimeout(function() {
+            prevLine.classList.remove('active');
+            prevLine.classList.add('complete');
+
+            var created = createLine(item.card, item.output);
+            var line = created.line;
+            var output = created.output;
+            leftEl.insertBefore(line, actionsEl);
+            currentLines.push(line);
+            if (output) {
+              leftEl.insertBefore(output, actionsEl);
+              currentLines.push(output);
+            }
+            prevLine = line;
+
+            if (item.card !== null) {
+              setActiveCard(item.card);
+            }
+
+            typeText(line, item.cmd, function() {
+              if (output) {
+                timeouts.push(setTimeout(function() {
+                  output.classList.add('visible');
+                }, 50));
+              }
+            });
+          }, delay));
+        });
+
+        timeouts.push(setTimeout(function() {
+          prevLine.classList.remove('active');
+          prevLine.classList.add('complete');
+          leftEl.insertBefore(successLine, actionsEl);
+          currentLines.push(successLine);
+          timeouts.push(setTimeout(function() { successLine.classList.add('visible'); }, 50));
+
+          leftEl.insertBefore(extraLine, actionsEl);
+          currentLines.push(extraLine);
+          timeouts.push(setTimeout(function() { extraLine.classList.add('visible'); }, 200));
+
+          if (actionsEl) actionsEl.classList.add('visible');
+          typing = false;
+        }, delay + 1700));
+      }
+
+      cards.forEach(function(card, index) {
+        card.addEventListener('click', function() {
+          setActiveCard(index);
+        });
+        card.addEventListener('mouseenter', function() {
+          if (!typing) setActiveCard(index);
+        });
+      });
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting && !typing && currentLines.length === 0) {
+            cards.forEach(function(card) { card.classList.add('visible'); });
+            runTerminal();
+          }
+        });
+      }, { threshold: 0.25 });
+      observer.observe(windowEl);
+
+      if (replayBtn) {
+        replayBtn.addEventListener('click', function() {
+          runTerminal();
+        });
+      }
+    })();
+
+    // ===== Compatible code copy =====
+    (function() {
+      var copyBtn = document.querySelector('[data-compat-copy]');
+      var toast = document.querySelector('[data-compat-toast]');
+      if (!copyBtn) return;
+
+      var codeText = 'import openai\n' +
+        'client = openai.OpenAI(\n' +
+        '    base_url="https://aihub.ssturing.com/v1",\n' +
+        '    api_key="sk-********************************"\n' +
+        ')';
+
+      copyBtn.addEventListener('click', function() {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(codeText).then(function() {
+            if (toast) {
+              toast.classList.add('show');
+              setTimeout(function() {
+                toast.classList.remove('show');
+              }, 1500);
+            }
+          });
+        }
+      });
+    })();
+  </script>
 
 </body>
 </html>
