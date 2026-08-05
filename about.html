@@ -162,6 +162,40 @@
       window.getShensuTheme = function() {
         return localStorage.getItem(STORAGE_KEY) || 'system';
       };
+
+      // Listen for theme commands from parent admin dashboard via postMessage
+      // Supports new-api native format: { themeMode: 'dark' | 'light' }
+      // and legacy fallback: 'theme:dark' | 'theme:light'
+      window.addEventListener('message', function(e) {
+        // Optional safety: restrict to your admin origin, e.g.:
+        // if (e.origin !== 'https://aihub.ssturing.com') return;
+        var theme = null;
+        if (e.data && typeof e.data === 'object') {
+          if (e.data.type === 'shensu-theme' && e.data.theme) {
+            theme = e.data.theme;
+          } else if (e.data.themeMode) {
+            theme = e.data.themeMode;
+          }
+        } else if (typeof e.data === 'string' && e.data.indexOf('theme:') === 0) {
+          theme = e.data.slice(6);
+        }
+        if (theme === 'dark' || theme === 'light' || theme === 'system') {
+          applyTheme(theme);
+        }
+      }, false);
+
+      // When embedded in an iframe, hide the manual toggle to avoid conflict with the parent UI
+      if (window.self !== window.top) {
+        var hideToggle = function() {
+          var btn = document.getElementById('themeToggle');
+          if (btn) btn.style.display = 'none';
+        };
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hideToggle);
+        } else {
+          hideToggle();
+        }
+      }
     })();
   </script>
   <style>
