@@ -177,6 +177,15 @@
       // Supports new-api native format: { themeMode: 'dark' | 'light' }
       // and legacy fallback: 'theme:dark' | 'theme:light'
       window.addEventListener('message', function(e) {
+        // Debug: log every message received inside the iframe
+        if (window.self !== window.top) {
+          console.log('[shensu] received postMessage:', {
+            origin: e.origin,
+            data: e.data,
+            typeofData: typeof e.data
+          });
+        }
+
         // Optional safety: restrict to your admin origin, e.g.:
         // if (e.origin !== 'https://aihub.ssturing.com') return;
         var theme = null;
@@ -190,6 +199,7 @@
           theme = e.data.slice(6);
         }
         if (theme === 'dark' || theme === 'light' || theme === 'system') {
+          console.log('[shensu] applying theme from postMessage:', theme);
           applyTheme(theme);
         }
       }, false);
