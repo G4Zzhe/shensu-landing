@@ -780,7 +780,7 @@
           <div id="productNum" class="font-display font-extrabold relative z-0" style="font-size: clamp(64px, 10vw, 120px); color: var(--color-border); line-height: 1"></div>
           <div class="relative z-10 -mt-6">
             <h3 id="productTitle" class="font-display font-extrabold mb-4 leading-tight" style="font-size: clamp(28px, 4vw, 48px)"></h3>
-            <p id="productDesc" class="font-body text-sm text-muted leading-loose mb-8 max-w-lg"></p>
+            <p id="productDesc" class="font-body text-base text-paper/90 leading-relaxed mb-8 max-w-lg"></p>
             <div id="productTags" class="flex flex-wrap gap-2"></div>
           </div>
         </div>
@@ -1129,7 +1129,7 @@
         if (desc) desc.textContent = p.desc;
         if (tags) {
           tags.innerHTML = p.tags.map(function(t) {
-            return '<span class="product-tag font-body text-[12px] px-3.5 py-1.5 rounded-full border tracking-normal" style="border-color:' + p.color + '60;color:' + p.color + ';--tag-color:' + p.color + '" data-color="' + p.color + '">' + t + '</span>';
+            return '<span class="product-tag font-body text-[13px] px-3.5 py-1.5 rounded-full border tracking-normal" style="border-color:' + p.color + '60;color:' + p.color + ';--tag-color:' + p.color + '" data-color="' + p.color + '">' + t + '</span>';
           }).join('');
 
           tags.querySelectorAll('span').forEach(function(tag) {
