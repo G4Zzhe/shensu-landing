@@ -104,6 +104,33 @@
         }
       }
 
+      var storageAvailable = (function() {
+        try {
+          var testKey = '__shensu_theme_test__';
+          localStorage.setItem(testKey, '1');
+          localStorage.removeItem(testKey);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      })();
+
+      function setStoredTheme(theme) {
+        if (!storageAvailable) return;
+        try {
+          localStorage.setItem(STORAGE_KEY, theme);
+        } catch (e) {}
+      }
+
+      function getStoredTheme() {
+        if (!storageAvailable) return 'system';
+        try {
+          return localStorage.getItem(STORAGE_KEY) || 'system';
+        } catch (e) {
+          return 'system';
+        }
+      }
+
       function applyTheme(theme) {
         if (theme === 'system') {
           var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -113,21 +140,21 @@
           applyVars(theme);
           setThemeButtonIcon(theme);
         }
-        localStorage.setItem(STORAGE_KEY, theme);
+        setStoredTheme(theme);
         try {
           document.documentElement.classList.toggle('dark', theme === 'dark');
         } catch (e) {}
       }
 
       function cycleTheme() {
-        var current = localStorage.getItem(STORAGE_KEY) || 'system';
+        var current = getStoredTheme();
         var order = ['system', 'light', 'dark'];
         var next = order[(order.indexOf(current) + 1) % order.length];
         applyTheme(next);
       }
 
       function initTheme() {
-        var saved = localStorage.getItem(STORAGE_KEY) || 'system';
+        var saved = getStoredTheme();
         applyTheme(saved);
       }
 
@@ -147,7 +174,7 @@
       }
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-        if ((localStorage.getItem(STORAGE_KEY) || 'system') === 'system') applyTheme('system');
+        if (getStoredTheme() === 'system') applyTheme('system');
       });
 
       // Fade in accent glow after theme is applied
@@ -160,7 +187,7 @@
         applyTheme(theme);
       };
       window.getShensuTheme = function() {
-        return localStorage.getItem(STORAGE_KEY) || 'system';
+        return getStoredTheme();
       };
 
       // Listen for theme commands from parent admin dashboard via postMessage
