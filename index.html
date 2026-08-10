@@ -475,6 +475,39 @@
       0% { background-position: 100% 0; }
       100% { background-position: -100% 0; }
     }
+    .client-scroll-row {
+      position: relative;
+      mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+    .client-scroll-track {
+      animation-name: clientScrollLeft;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      width: max-content;
+    }
+    .client-scroll-row[data-direction="right"] .client-scroll-track {
+      animation-name: clientScrollRight;
+    }
+    @keyframes clientScrollLeft {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @keyframes clientScrollRight {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+    .client-scroll-row:hover .client-scroll-track {
+      animation-play-state: paused;
+    }
+    .client-chip {
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .client-chip:hover {
+      transform: translateY(-3px) scale(1.03);
+      border-color: rgba(200, 255, 79, 0.5);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 20px rgba(200,255,79,0.08);
+    }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -827,16 +860,19 @@
         <h2 class="font-display font-extrabold text-paper leading-none mb-4 reveal-left" style="font-size: clamp(36px, 6vw, 72px)">
           无缝对接
           <br />
-          <span class="text-lime">主流客户端</span>
+          <span class="text-lime">AI 应用生态</span>
         </h2>
-        <p class="font-body text-sm text-muted max-w-sm mx-auto leading-relaxed reveal">修改 API 地址和密钥，即可在以下客户端中使用</p>
+        <p class="font-body text-sm text-muted max-w-sm mx-auto leading-relaxed reveal">修改 API 地址和密钥，即可在以下应用与平台中使用</p>
       </div>
-      <div id="clientsOrbit" class="relative w-full max-w-4xl mx-auto h-[420px] md:h-[520px] rounded-3xl border border-border bg-surface overflow-hidden flex items-center justify-center" style="perspective: 1000px;">
-        <div id="orbitRing" class="relative w-[280px] h-[280px] md:w-[360px] md:h-[360px]" style="transform-style: preserve-3d;">
-          <!-- JS populated -->
-        </div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-lime/10 border border-lime/30 flex items-center justify-center pointer-events-none z-10 shadow-[0_0_60px_rgba(200,255,79,0.15)] overflow-hidden">
-          <img src="images/神速图标.png" alt="神速信息" class="w-full h-full object-cover" />
+      <div id="clientsOrbit" class="relative w-full max-w-7xl mx-auto rounded-3xl border border-border bg-surface overflow-hidden py-16 md:py-24">
+        <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 50%, rgba(200,255,79,0.04) 0%, transparent 60%);"></div>
+        <div class="flex flex-col gap-6 md:gap-8">
+          <div class="client-scroll-row overflow-hidden select-none" data-direction="left" data-speed="35">
+            <div class="client-scroll-track flex whitespace-nowrap"><!-- JS populated --></div>
+          </div>
+          <div class="client-scroll-row overflow-hidden select-none" data-direction="right" data-speed="45">
+            <div class="client-scroll-track flex whitespace-nowrap"><!-- JS populated --></div>
+          </div>
         </div>
       </div>
     </div>
@@ -949,11 +985,33 @@
       ];
 
       var clients = [
-        { name: 'ChatGPT-Next-Web', color: '#10b981', icon: 'images/ChatGPT-Next-Web icon.png' },
-        { name: 'LobeChat', color: '#6366f1', icon: 'images/LobeChat icon.png' },
-        { name: 'ChatBox', color: '#f59e0b', icon: 'images/ChatBox icon.jpg' },
-        { name: 'NiceGUI', color: '#ec4899', icon: 'images/NiceGUI icon.png' },
-        { name: 'Open WebUI', color: '#3b82f6', icon: 'images/open-webui icon.png' },
+        { name: 'ChatGPT-Next-Web', color: '#3b82f6' },
+        { name: 'LobeChat', color: '#6366f1' },
+        { name: 'ChatBox', color: '#f59e0b' },
+        { name: 'NiceGUI', color: '#ec4899' },
+        { name: 'Open WebUI', color: '#10b981' },
+      ];
+
+      var extraClients = [
+        { name: 'Cherry Studio', color: '#ef4444' },
+        { name: 'AionUI', color: '#8b5cf6' },
+        { name: '流畅阅读', color: '#06b6d4' },
+        { name: 'CC Switch', color: '#f97316' },
+        { name: 'DeepChat', color: '#3b82f6' },
+        { name: 'Lobe Chat 官方示例', color: '#6366f1' },
+        { name: 'AI as Workspace', color: '#10b981' },
+        { name: 'AMA 问天', color: '#ec4899' },
+        { name: 'OpenCat', color: '#f59e0b' },
+        { name: 'LibreChat', color: '#8b5cf6' },
+        { name: 'ChatX', color: '#f59e0b' },
+        { name: 'MoeAI', color: '#ec4899' },
+        { name: 'ChatWise', color: '#3b82f6' },
+        { name: 'Noi', color: '#10b981' },
+        { name: 'Sider', color: '#6366f1' },
+        { name: 'AstrBot', color: '#06b6d4' },
+        { name: 'NoneBot', color: '#ef4444' },
+        { name: 'Trae', color: '#f97316' },
+        { name: 'Coze', color: '#10b981' },
       ];
 
       var tickerItems = ['大模型 API', '订阅转 API', '按量计费', '团队管理', 'OpenAI 兼容', '极速延迟', '国内节点', '99.9% 可用', '40+ 模型'];
@@ -1335,93 +1393,33 @@
       }, { threshold: 0.2 });
       if (whyDeckWrap) whyObserver.observe(whyDeckWrap);
 
-      // ===== Clients orbit =====
+      // ===== Clients scroll wall =====
       var clientsOrbit = document.getElementById('clientsOrbit');
-      var orbitRing = document.getElementById('orbitRing');
-      if (clientsOrbit && orbitRing) {
-        var orbitAngle = 0;
-        var orbitPaused = false;
-        var orbitVisible = false;
-        var orbitNodes = [];
+      var scrollRows = clientsOrbit ? Array.from(clientsOrbit.querySelectorAll('.client-scroll-row')) : [];
+      if (scrollRows.length >= 2) {
+        var allClients = clients.concat(extraClients);
+        var half = Math.ceil(allClients.length / 2);
+        var primaryClients = allClients.slice(0, half);
+        var secondaryClients = allClients.slice(half);
 
-        orbitRing.innerHTML = clients.map(function(c, i) {
-          return '<div class="orbit-item absolute top-1/2 left-1/2 w-16 h-16 md:w-20 md:h-20 -ml-8 -mt-8 md:-ml-10 md:-mt-10 flex flex-col items-center transition-transform duration-300 cursor-pointer" data-index="' + i + '" title="' + c.name + '">' +
-            '<div class="orbit-node w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center overflow-hidden shrink-0" style="background:' + c.color + ';box-shadow:0 0 0 1px rgba(255,255,255,0.1),0 8px 24px ' + c.color + '40">' +
-              '<img src="' + c.icon + '" alt="' + c.name + '" class="w-full h-full object-cover" />' +
-            '</div>' +
-            '<span class="orbit-label mt-2 text-[11px] font-body font-medium text-paper whitespace-nowrap opacity-80 transition-opacity duration-300 pointer-events-none" style="text-shadow:0 0 12px rgba(200,255,79,0.1)">' + c.name + '</span>' +
-          '</div>';
-        }).join('');
-
-        var orbitItems = Array.from(orbitRing.querySelectorAll('.orbit-item'));
-
-        function positionOrbitItems() {
-          var radius = 190;
-          if (window.innerWidth >= 768) radius = 250;
-          orbitItems.forEach(function(item, i) {
-            var angle = (i / clients.length) * Math.PI * 2 + orbitAngle;
-            var x = Math.cos(angle) * radius;
-            var y = Math.sin(angle) * radius * 0.35;
-            var z = Math.sin(angle) * radius;
-            var baseScale = (z + radius) / (radius * 2) * 0.5 + 0.5;
-            var scale = hoveredIndex === i ? baseScale * 1.3 : baseScale;
-            var opacity = baseScale * 0.6 + 0.4;
-            item.style.transform = 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px) scale(' + scale + ')';
-            item.style.opacity = opacity;
-            item.style.zIndex = hoveredIndex === i ? 200 : Math.round(scale * 100);
-          });
+        function renderClientChip(c) {
+          return '<span class="client-chip inline-flex items-center gap-2 font-body font-semibold text-sm md:text-base px-5 py-2.5 md:px-6 md:py-3 rounded-full border border-border bg-surface-hover/60 text-paper/90 mx-2 md:mx-3 cursor-default" style="border-color:' + c.color + '30;color:' + c.color + '">' +
+            '<span class="w-2 h-2 rounded-full" style="background:' + c.color + '"></span>' +
+            c.name +
+          '</span>';
         }
 
-        function animateOrbit() {
-          if (orbitVisible && !orbitPaused) {
-            orbitAngle += 0.003;
-            positionOrbitItems();
-          }
-          requestAnimationFrame(animateOrbit);
+        function populateTrack(row, items) {
+          var track = row.querySelector('.client-scroll-track');
+          if (!track) return;
+          var chips = items.map(renderClientChip).join('');
+          track.innerHTML = chips + chips + chips + chips;
+          var speed = parseInt(row.getAttribute('data-speed') || '35', 10);
+          track.style.animationDuration = (items.length * speed / 2.5) + 's';
         }
-        animateOrbit();
 
-        var hoveredIndex = -1;
-        orbitItems.forEach(function(item, i) {
-          var label = item.querySelector('.orbit-label');
-          item.addEventListener('mouseenter', function() {
-            orbitPaused = true;
-            hoveredIndex = i;
-            positionOrbitItems();
-            if (label) { label.style.opacity = '1'; label.style.textShadow = '0 0 18px rgba(200,255,79,0.6)'; }
-          });
-          item.addEventListener('mouseleave', function() {
-            hoveredIndex = -1;
-            orbitPaused = false;
-            if (label) { label.style.opacity = '0.8'; label.style.textShadow = '0 0 12px rgba(200,255,79,0.1)'; }
-          });
-        });
-
-        var isDragging = false;
-        var lastX = 0;
-        clientsOrbit.addEventListener('mousedown', function(e) {
-          isDragging = true;
-          lastX = e.clientX;
-          orbitPaused = true;
-        });
-        window.addEventListener('mousemove', function(e) {
-          if (!isDragging) return;
-          var dx = e.clientX - lastX;
-          orbitAngle += dx * 0.005;
-          lastX = e.clientX;
-          positionOrbitItems();
-        });
-        window.addEventListener('mouseup', function() {
-          isDragging = false;
-          orbitPaused = false;
-        });
-
-        var orbitObserver = new IntersectionObserver(function(entries) {
-          entries.forEach(function(entry) {
-            orbitVisible = entry.isIntersecting;
-          });
-        }, { threshold: 0.2 });
-        orbitObserver.observe(clientsOrbit);
+        populateTrack(scrollRows[0], primaryClients);
+        populateTrack(scrollRows[1], secondaryClients);
       }
 
       // ===== CTA key generator =====
